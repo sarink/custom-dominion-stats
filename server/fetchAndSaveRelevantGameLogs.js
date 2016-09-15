@@ -1,5 +1,4 @@
 (function(dateStrings) {
-
   var fs = require('fs');
   var mkdirp = require('mkdirp');
   var cheerio = require('cheerio');
@@ -8,7 +7,7 @@
   var _ = require('lodash');
   var leftPad = require('left-pad');
 
-  var MAX_CONCURRENT_AJAX_REQUESTS = 20;
+  var MAX_CONCURRENT_AJAX_REQUESTS = 5;
 
   var writeGameLogToFile = function(dir, file, contents) {
     mkdirp(dir, function(errorCreatingDirectory) {
@@ -88,21 +87,7 @@
     });
   };
 
-  if (_.isEmpty(dateStrings)) {
-    dateStrings = [];
-    for (var year = 2016; year <= 2016; year++) {
-      var yearStr = year.toString();
-      for (var month = 9; month <= 9; month++) {
-        var monthStr = leftPad(month, 2, 0);
-        for (var day = 1; day <= 12; day++ ) {
-          var dayStr = leftPad(day, 2, 0);
-          var dateString = yearStr + monthStr + dayStr;
-          dateStrings.push(dateString);
-        }
-      }
-    }
-  }
-
+  if (_.isString(dateStrings)) dateStrings = [dateStrings];
   console.log('executing with dateStrings:', dateStrings);
 
   Promise.map(dateStrings, downloadAndWriteRelevantGameLogsForDate, {concurrency: 1,}).then(function() {
