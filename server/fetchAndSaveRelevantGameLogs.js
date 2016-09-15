@@ -1,4 +1,7 @@
 (function(dateStrings) {
+  // here's the /etc/crontab listing to run this every 24 on my ubuntu 14 server:
+  // sudo /home/sarink/.nvm/versions/node/v6.4.0/bin/node /var/www/custom-dominion-stats/server/fetchAndSaveRelevantGameLogs.js
+
   var fs = require('fs');
   var mkdirp = require('mkdirp');
   var cheerio = require('cheerio');
