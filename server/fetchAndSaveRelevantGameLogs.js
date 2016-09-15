@@ -6,19 +6,32 @@
   var request = require('request');
   var _ = require('lodash');
   var leftPad = require('left-pad');
+  var util = require('util');
 
-  var MAX_CONCURRENT_AJAX_REQUESTS = 5;
+  var LOG_FILE = __dirname + '/' + new Date().toISOString().slice(0, 10) + '-debug.log';
+  var MAX_CONCURRENT_AJAX_REQUESTS = 20;
+
+  var logFileStream = fs.createWriteStream(LOG_FILE, {flags : 'a',});
+  var log = function() {
+    logFileStream.write(util.format.apply(null, arguments) + '\n');
+    process.stdout.write(util.format.apply(null, arguments) + '\n');
+  };
+
+  var exit = function() {
+    logFileStream.close();
+    process.exit();
+  };
 
   var writeGameLogToFile = function(dir, file, contents) {
     mkdirp(dir, function(errorCreatingDirectory) {
       if (errorCreatingDirectory) {
-        console.log('error creating directory:', dir);
+        log('error creating directory:', dir);
       } else {
         fs.writeFile(dir+file, contents, function(errorWritingFile) {
           if (errorWritingFile) {
-            console.log('error writing file:', dir+file);
+            log('error writing file:', dir+file);
           } else {
-            console.log('success! wrote file:', dir+file, contents);
+            log('success! wrote file:', dir+file, contents);
           }
         });
       }
@@ -42,7 +55,7 @@
 
   var fetchGameLog = function(logUrl) {
     return new Promise(function(resolve, reject) {
-      console.log('fetching game log:', logUrl);
+      log('fetching game log:', logUrl);
       request(logUrl, function(logError, logResponse, logBody) {
         if (!logError && logBody && doWeCareAboutThisGameLog(logBody)) {
           var dir = parseLogFileSaveDirFromUrl(logUrl);
@@ -58,7 +71,7 @@
     var baseUrl = 'http://dominion-game-logs.s3.amazonaws.com/';
     var gameLogsUrl = baseUrl + yyyymmdd + '/index.html';
 
-    console.log('fetching game logs for date:', yyyymmdd);
+    log('fetching game logs for date:', yyyymmdd);
     return new Promise(function(resolve, reject) {
       request(gameLogsUrl, function(error, response, body) {
         var logUrls = [];
@@ -73,25 +86,34 @@
               logUrls.push(logUrl);
             }
           });
-          console.log('number of game logs for date ' + yyyymmdd + ':', logUrls.length);
+          log('number of game logs for date ' + yyyymmdd + ':', logUrls.length);
 
           return resolve(Promise.map(logUrls, fetchGameLog, {concurrency: MAX_CONCURRENT_AJAX_REQUESTS,}).then(function() {
-            console.log('done fetching all game logs for date:', yyyymmdd);
-            console.log('------------------------------------------------------------');
+            log('done fetching all game logs for date:', yyyymmdd);
+            log('------------------------------------------------------------');
           }));
 
         } else {
-          console.log('error fetching game log urls for date:', yyyymmdd);
+          log('error fetching game log urls for date:', yyyymmdd);
         }
       });
     });
   };
 
-  if (_.isString(dateStrings)) dateStrings = [dateStrings];
-  console.log('executing with dateStrings:', dateStrings);
+  if (_.isEmpty(dateStrings)) {
+    var dayBeforeYesterday = new Date();
+    dayBeforeYesterday.setDate(dayBeforeYesterday.getDate() - 2);
+    var yyyymmddDayBeforeYesterday = dayBeforeYesterday.toISOString().slice(0, 10).replace(/-/g, '');
+    dateStrings = [yyyymmddDayBeforeYesterday,];
+  } else if (!_.isArray(dateStrings)) {
+    log('must pass an array of dateStrings in yyyymmdd format (ie, "node fetchAndSaveRelevantGameLogs.js \'20160721\' \'20160722\'")');
+    exit();
+  }
+
+  log('executing with dateStrings:', dateStrings);
 
   Promise.map(dateStrings, downloadAndWriteRelevantGameLogsForDate, {concurrency: 1,}).then(function() {
-    console.log('finished downloading and writing game logs for all dateStrings');
-    process.exit();
+    log('finished downloading and writing game logs for all dateStrings');
+    exit();
   });
 }(process.argv.slice(2)));
