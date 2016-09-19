@@ -112,9 +112,10 @@ class App extends Component {
   }
 
   componentWillMount() {
-    const url = '/logs';
-    const params = { playerNames: this.state.playerNames.join(',') };
-    $.get(url, params).then((resp) => {
+    const baseUrl = '/logs';
+    const { playerNames } = this.state;
+    const url = `${baseUrl}?numPlayers=${playerNames.length}&playerNames=${playerNames.join(',')}`;
+    $.get(url).then((resp) => {
       this.setState({gameLogs: resp});
     });
   }
