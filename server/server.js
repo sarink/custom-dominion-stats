@@ -10,6 +10,8 @@
   var app = express();
   app.listen(PORT);
 
+  app.use(express.static('../client'));
+
   app.get('/logs', function(req, res) {
     var playerNames = req.query.playerNames;
     var numPlayers = req.query.numPlayers;
