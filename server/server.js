@@ -9,6 +9,7 @@
   var PORT = 4000;
   var app = express();
   app.listen(PORT);
+  console.log('app running on port', PORT);
 
   app.use(express.static('../client'));
 
