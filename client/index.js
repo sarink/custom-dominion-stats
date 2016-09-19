@@ -3,7 +3,7 @@ const $ = window.$;
 
 class App extends React.Component {
   componentWillMount() {
-    $.get('/logs/', { numPlayers: 2, }).then((resp) => {
+    $.get('/logs/', { numPlayers: 2 }).then((resp) => {
       console.log(resp);
     });
   }

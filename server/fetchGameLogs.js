@@ -42,7 +42,7 @@
       ' VALUES (?, ?, ?, ?)'
     );
     var players = parsePlayerNamesFromLog(logBody);
-    stmt.run([players.join(','), logBody, logUrl, players.length,]);
+    stmt.run([players.join(','), logBody, logUrl, players.length]);
     return stmt.finalize();
   };
 
@@ -79,7 +79,7 @@
           });
           logger.log('number of game logs for date ' + yyyymmdd + ':', logUrls.length);
 
-          return resolve(Promise.map(logUrls, fetchGameLog, {concurrency: MAX_CONCURRENT_AJAX_REQUESTS,}).then(function() {
+          return resolve(Promise.map(logUrls, fetchGameLog, {concurrency: MAX_CONCURRENT_AJAX_REQUESTS}).then(function() {
             logger.log('done fetching all game logs for date:', yyyymmdd);
             logger.log('------------------------------------------------------------');
           }));
@@ -95,7 +95,7 @@
     var dayBeforeYesterday = new Date();
     dayBeforeYesterday.setDate(dayBeforeYesterday.getDate() - 2);
     var yyyymmddDayBeforeYesterday = dayBeforeYesterday.toISOString().slice(0, 10).replace(/-/g, '');
-    dateStrings = [yyyymmddDayBeforeYesterday,];
+    dateStrings = [yyyymmddDayBeforeYesterday];
   } else if (!_.isArray(dateStrings)) {
     logger.log('must pass an array of dateStrings in yyyymmdd format (ie, "node fetchAndSaveRelevantGameLogs.js \'20160721\' \'20160722\'")');
     exit();
@@ -103,7 +103,7 @@
 
   logger.log('executing with dateStrings:', dateStrings);
 
-  Promise.map(dateStrings, downloadAndWriteRelevantGameLogsForDate, {concurrency: 1,}).then(function() {
+  Promise.map(dateStrings, downloadAndWriteRelevantGameLogsForDate, {concurrency: 1}).then(function() {
     logger.log('finished downloading and writing game logs for all dateStrings');
     exit();
   });
