@@ -37,7 +37,7 @@
 
   var saveGameLogToDb = function(logUrl, logBody) {
     var stmt = db.instance.prepare(
-      'INSERT INTO ' + db.DB_TABLE +
+      'INSERT OR REPLACE INTO ' + db.DB_TABLE +
       ' (' + db.DB_COL_PLAYERS + ', ' + db.DB_COL_RAW_LOG + ', ' + db.DB_COL_LOG_URL + ', ' + db.DB_COL_NUM_PLAYERS + ')' +
       ' VALUES (?, ?, ?, ?)'
     );

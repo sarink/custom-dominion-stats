@@ -26,7 +26,7 @@
              ' (' + DB_COL_ID + ' INTEGER PRIMARY KEY AUTOINCREMENT, ' +
                     DB_COL_PLAYERS + ' TEXT, ' +
                     DB_COL_RAW_LOG + ' BLOB, ' +
-                    DB_COL_LOG_URL + ' TEXT, ' +
+                    DB_COL_LOG_URL + ' TEXT NOT NULL UNIQUE, ' +
                     DB_COL_NUM_PLAYERS + ' INTEGER ' + ')'
       );
       logger.log('creating ' + DB_TABLE + ' table');
