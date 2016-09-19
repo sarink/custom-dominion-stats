@@ -73,7 +73,7 @@
           $('a').each(function() {
             var $a = $(this);
             var logUrl = $a.attr('href');
-            if (logUrl.indexOf('://dominion-game-logs.s3.amazonaws.com/game_logs/' + yyyymmdd) !== -1) {
+            if (logUrl.indexOf('://dominion-game-logs.s3.amazonaws.com/game_logs/') !== -1) {
               logUrls.push(logUrl);
             }
           });
