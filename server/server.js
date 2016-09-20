@@ -8,12 +8,14 @@
 
   var db = require('./db');
 
+  var REPO_ROOT = '/var/www/custom-dominion-stats';
   var PORT = 4000;
+
   var app = express();
   app.listen(PORT);
   console.log('server.js running on port', PORT);
 
-  app.use(express.static('/var/www/custom-dominion-stats/client'));
+  app.use(express.static(REPO_ROOT + '/client'));
 
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
