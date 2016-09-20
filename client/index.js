@@ -119,6 +119,7 @@ class App extends Component {
     const url = `${baseUrl}?numPlayers=${playerNames.length}&playerNames=${playerNames.join(',')}`;
     $.get(url).then((resp) => {
       this.setState({gameLogs: resp});
+      window.gameLogs = resp;
     });
   }
 
