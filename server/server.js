@@ -1,4 +1,4 @@
-(function() {
+(function(args) {
   var fs = require('fs');
   var _ = require('lodash');
   var express = require('express');
@@ -26,21 +26,25 @@
     var queryingByPlayerNames = playerNames != null;
     var queryingByNumPlayers = numPlayers != null;
 
-    if (queryingByNumPlayers) {
-      stmt = stmt + db.DB_COL_NUM_PLAYERS + ' = ?';
-      params.push(numPlayers);
-    }
+    if (!queryingByNumPlayers && !queryingByPlayerNames) {
+      stmt = stmt + '1 = 1';
+    } else {
+      if (queryingByNumPlayers) {
+        stmt = stmt + db.DB_COL_NUM_PLAYERS + ' = ?';
+        params.push(numPlayers);
+      }
 
-    if (queryingByPlayerNames) {
-      if (queryingByNumPlayers) stmt = stmt + ' AND ';
-      playerNames = playerNames.split(',');
-      _.each(playerNames, function(player, index) {
-        stmt = stmt + '(' + db.DB_COL_PLAYERS + ' LIKE ?) ';
-        if (index < playerNames.length - 1) {
-          stmt = stmt + ' AND ';
-        }
-      });
-      params = params.concat(_.map(playerNames, function(player) { return '%'+player+'%'; }));
+      if (queryingByPlayerNames) {
+        if (queryingByNumPlayers) stmt = stmt + ' AND ';
+        playerNames = playerNames.split(',');
+        _.each(playerNames, function(player, index) {
+          stmt = stmt + '(' + db.DB_COL_PLAYERS + ' LIKE ?) ';
+          if (index < playerNames.length - 1) {
+            stmt = stmt + ' AND ';
+          }
+        });
+        params = params.concat(_.map(playerNames, function(player) { return '%'+player+'%'; }));
+      }
     }
 
     var result = [];
@@ -55,5 +59,6 @@
         res.send(JSON.stringify(result));
       }
     );
+
   });
-}());
+}(process.argv.slice(2)));
