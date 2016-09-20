@@ -4,8 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start-dev": "simplehttpserver"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +19,7 @@
     "sqlite3": "^3.1.4"
   },
   "devDependencies": {
-    "eslint": "^3.5.0"
+    "eslint": "^3.5.0",
+    "simplehttpserver": "0.0.6"
   }
 }
