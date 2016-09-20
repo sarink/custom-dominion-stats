@@ -2,8 +2,10 @@ const React = window.React;
 const { PropTypes, Component } = React;
 const _ = window._;
 
+// Returns the names of the player in an array
 const getPlayers = game => game.players.split(',');
 
+// Returns the names of the winner or winners in an array
 const getWinners = game => {
   var firstPlace = /1st place: (\w+)\n/g;
   const winners = [];
@@ -13,6 +15,23 @@ const getWinners = game => {
   }
 
   return winners;
+};
+
+// Returns a hash of player's names to their final score
+const getScores = game => {
+  // This is lame perf thing, I just don't see why we should search through the entire log when
+  // we know the points always comes after the "game over" marker
+  const gameOverMarker = '------------ Game Over ------------';
+  const log = game.raw_log;
+  const gameResultsIndex = log.indexOf(gameOverMarker) + gameOverMarker.length;
+  const gameResults = log.substring(gameResultsIndex);
+
+  const players = getPlayers(game);
+  return _.fromPairs(players.map(player => {
+    const scoreFinder = new RegExp(`${player} - total victory points: (.*?)\n`);
+    const score = parseInt(log.match(scoreFinder)[1], 10);
+    return [player, score];
+  }));
 };
 
 class GameExplorer extends Component {
@@ -35,6 +54,13 @@ class GameExplorer extends Component {
         <h2>Game {gameId}</h2>
         <p>Players: {getPlayers(game).join(', ')}</p>
         <p>Winner(s): {getWinners(game).join(', ')}</p>
+        <p>Scores:
+          <ul>
+            {
+              _.map(getScores(game), (score, player) => <li key={player}>{player}: {score}</li>)
+            }
+          </ul>
+        </p>
       </div>
     );
   }
