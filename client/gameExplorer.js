@@ -17,6 +17,17 @@ const getWinners = game => {
   return winners;
 };
 
+// Returns an array of the names of the events in the game - empty if none
+const getEvents = game => {
+  const matchResult = game.raw_log.match(/Events: (.*?)\n/);
+  return matchResult ? matchResult[1].split(', ') : [];
+};
+
+// Returns an array of the names of the supply piles in the game - includes coppers, estates, etc
+const getSupplyPiles = game => game.raw_log.match(/Supply cards: (.*?)\n/)[1].split(', ');
+
+const excludeBoringPiles = piles => _.difference(piles, ['Copper', 'Silver', 'Gold', 'Estate', 'Duchy', 'Province', 'Curse']);
+
 // Returns a hash of player's names to their final score
 const getScores = game => {
   // This is lame perf thing, I just don't see why we should search through the entire log when
@@ -38,6 +49,9 @@ class GameDetails extends Component {
   render() {
     const { game } = this.props;
 
+    const events = getEvents(game);
+    const supplyPiles = getSupplyPiles(game);
+
     return (
       <div>
         <h2>Game {game.id}</h2>
@@ -57,6 +71,18 @@ class GameDetails extends Component {
             }
           </ul>
         </div>
+        <div>
+          <h3>Piles</h3>
+          { excludeBoringPiles(supplyPiles).join(', ') }
+        </div>
+        {
+          events.length > 0 ? (
+            <div>
+              <h3>Events</h3>
+              {events.join(', ')}
+            </div>
+          ) : null
+        }
       </div>
     );
   }
