@@ -10,7 +10,7 @@
   app.listen(PORT);
   console.log('server.js running on port', PORT);
 
-  app.use(express.static('../client'));
+  app.use(express.static('/var/www/custom-dominion-stats/client'));
 
   app.get('/logs', function(req, res) {
     var playerNames = req.query.playerNames;

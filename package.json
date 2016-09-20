@@ -4,7 +4,11 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start-dev": "simplehttpserver"
+    "start-dev": "simplehttpserver",
+    "start-prod": "forever start server/server.js",
+    "stop-prod": "forever stop server/server.js",
+    "deploy-prod": ". $HOME/.nvm/nvm.sh && nvm use && npm run stop-prod & sudo git pull && npm install && npm run start-prod",
+    "forever-list": "forever list"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +17,7 @@
     "bluebird": "^3.4.6",
     "cheerio": "^0.22.0",
     "express": "^4.14.0",
+    "forever": "^0.15.2",
     "lodash": "^4.15.0",
     "promise": "^7.1.1",
     "request": "^2.74.0",
