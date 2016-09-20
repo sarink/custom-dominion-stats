@@ -162,6 +162,7 @@
       return (
         <div>
           <Leaderboard playerNames={playerNames.split(',')} gameLogs={gameLogs} />
+          <GameExplorer gameLogs={gameLogs} />
         </div>
       );
     }
