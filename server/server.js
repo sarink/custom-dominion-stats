@@ -2,6 +2,9 @@
   var fs = require('fs');
   var _ = require('lodash');
   var express = require('express');
+  var exec = require('child_process').exec;
+  var crypto = require('crypto');
+  var bodyParser = require('body-parser');
 
   var db = require('./db');
 
@@ -11,6 +14,31 @@
   console.log('server.js running on port', PORT);
 
   app.use(express.static('/var/www/custom-dominion-stats/client'));
+
+  app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(bodyParser.json());
+
+  app.post('/deploy-prod', function(req, res) {
+    var payload = JSON.stringify(req.body);
+    var githubSignature = req.headers['x-hub-signature'];
+    var githubEvent = req.headers['x-github-event'];
+
+    // The trim() on the end is crucial, otherwise the last character is a newline
+    var secret  = fs.readFileSync(__dirname + '/github_hook_secret.txt', 'utf8').trim();
+
+    // This sha1 is an hmac hex digest of the payload using our secret as the key
+    var sha1 = 'sha1=' + crypto.createHmac('sha1', secret).update(payload).digest('hex');
+
+    if (githubEvent === 'push') {
+      res.sendStatus(200);
+      console.log('signature matched for push event! calling npm run deploy-prod');
+      var cmd = 'npm run deploy-prod';
+      exec(cmd);
+    } else {
+      console.log('signature did not match');
+      res.sendStatus(403);
+    }
+  });
 
   app.get('/logs', function(req, res) {
     var playerNames = req.query.playerNames;
