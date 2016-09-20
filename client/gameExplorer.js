@@ -34,6 +34,46 @@ const getScores = game => {
   }));
 };
 
+class GameDetails extends Component {
+  render() {
+    const { game } = this.props;
+
+    return (
+      <div>
+        <h2>Game {game.id}</h2>
+        <div>
+          <h3>Players</h3>
+          {getPlayers(game).join(', ')}
+        </div>
+        <div>
+          <h3>Winner(s)</h3>
+          {getWinners(game).join(', ')}
+        </div>
+        <div>
+          <h3>Scores</h3>
+          <ul>
+            {
+              _.map(getScores(game), (score, player) => <li key={player}>{player}: {score}</li>)
+            }
+          </ul>
+        </div>
+      </div>
+    );
+  }
+}
+
+GameDetails.propTypes = {
+  game: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    players: PropTypes.string.isRequired,
+    raw_log: PropTypes.string.isRequired,
+    log_url: PropTypes.string.isRequired,
+    num_players: PropTypes.number.isRequired,
+  })
+};
+
+
+
 class GameExplorer extends Component {
   constructor() {
     super();
@@ -46,27 +86,10 @@ class GameExplorer extends Component {
     this.setState({ selectedGameId: value ? parseInt(value, 10) : null });
   }
 
-  renderGame(gameId) {
-    const game = _.find(this.props.gameLogs, { id: gameId });
-
-    return (
-      <div>
-        <h2>Game {gameId}</h2>
-        <p>Players: {getPlayers(game).join(', ')}</p>
-        <p>Winner(s): {getWinners(game).join(', ')}</p>
-        <p>Scores:
-          <ul>
-            {
-              _.map(getScores(game), (score, player) => <li key={player}>{player}: {score}</li>)
-            }
-          </ul>
-        </p>
-      </div>
-    );
-  }
-
   render() {
     const games = this.props.gameLogs;
+
+    const selectedGame = this.state.selectedGameId ? _.find(this.props.gameLogs, { id: this.state.selectedGameId }) : null;
 
     return (
       <div>
@@ -79,7 +102,7 @@ class GameExplorer extends Component {
           { games.map(g => <option key={g.id} value={g.id}>Game {g.id}</option>) }
         </select>
 
-        { this.state.selectedGameId ? this.renderGame(this.state.selectedGameId) : null }
+        { selectedGame ? <GameDetails game={selectedGame} /> : null }
       </div>
     );
   }
