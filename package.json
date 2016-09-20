@@ -5,10 +5,10 @@
   "main": "server.js",
   "scripts": {
     "start-dev": "simplehttpserver",
-    "start-prod": "forever start server/server.js -o server/log/forever-`date '+%Y%m%d%H%M%S'`.log",
-    "stop-prod": "forever stop server/server.js",
+    "start-prod": ". $HOME/.nvm/nvm.sh && nvm use && mkdirp server/logs && mkdirp server/db && npm run forever-stopall && forever start -o server/logs/forever-`date '+%Y%m%d%H%M%S'`.log server/server.js ",
+    "forever-stopall": ". $HOME/.nvm/nvm.sh && nvm use && forever stopall",
     "deploy-prod": ". $HOME/.nvm/nvm.sh && nvm use && npm run stop-prod & sudo git pull && npm install && npm run start-prod",
-    "forever-list": "forever list"
+    "forever-list": ". $HOME/.nvm/nvm.sh && nvm use && forever list"
   },
   "keywords": [],
   "author": "",
