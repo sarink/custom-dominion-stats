@@ -39,8 +39,8 @@ class PlayerWithPlaces extends Component {
     return (
       <div>
         <h3>{playerName}</h3>
-        Firsts: {firsts}
-        Seconds: {seconds}
+        Firsts: {firsts}<br/>
+        Seconds: {seconds}<br/>
         Thirds: {thirds}
         <hr/>
       </div>
