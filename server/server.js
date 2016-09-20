@@ -4,19 +4,17 @@
   var express = require('express');
 
   var db = require('./db');
-  var logger = require('./logger');
 
   var PORT = 4000;
   var app = express();
   app.listen(PORT);
-  console.log('app running on port', PORT);
+  console.log('server.js running on port', PORT);
 
   app.use(express.static('../client'));
 
   app.get('/logs', function(req, res) {
     var playerNames = req.query.playerNames;
     var numPlayers = req.query.numPlayers;
-    logger.log('req query is', req.query);
 
     var stmt = (
       'SELECT * \
@@ -46,8 +44,6 @@
     }
 
     var result = [];
-    logger.log('stmt', stmt);
-    logger.log('params', params);
     db.instance.each(
       stmt,
       params,
