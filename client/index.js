@@ -114,7 +114,7 @@ class App extends Component {
   }
 
   componentWillMount() {
-    const baseUrl = '/logs';
+    const baseUrl = 'http://crossorigin.me/http://sarink.net:4000/logs';
     const { playerNames } = this.state;
     const url = `${baseUrl}?numPlayers=${playerNames.length}&playerNames=${playerNames.join(',')}`;
     $.get(url).then((resp) => {
@@ -127,6 +127,7 @@ class App extends Component {
     return (
       <div>
         <Leaderboard playerNames={playerNames} gameLogs={gameLogs} />
+        <GameExplorer gameLogs={gameLogs} />
       </div>
     );
   }
