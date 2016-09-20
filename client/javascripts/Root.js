@@ -60,6 +60,7 @@ window.App.Root = (function() {
       return (
         <div>
           <window.App.Leaderboard playerNames={playerNames.split(',')} gameLogs={gameLogs} />
+          <br /><hr />
           <window.App.GameExplorer gameLogs={gameLogs} />
         </div>
       );

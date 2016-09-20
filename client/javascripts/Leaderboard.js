@@ -39,7 +39,6 @@ window.App.Leaderboard = (function() {
           Firsts: {firsts}<br/>
           Seconds: {seconds}<br/>
           Thirds: {thirds}
-          <hr/>
         </div>
       );
     }
@@ -72,7 +71,7 @@ window.App.Leaderboard = (function() {
       const sortedPlayers = _.reverse(_.sortBy(playerNames, (player) => leaderboard[player].firsts));
       return (
         <div>
-          <h1>Dominion Leaderboard</h1>
+          <h1>Leaderboard</h1>
           {sortedPlayers.map((playerName) => {
             return (
               <PlayerWithPlaces
