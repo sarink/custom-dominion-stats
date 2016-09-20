@@ -72,13 +72,15 @@ class Leaderboard extends Component {
       if (second) leaderboard[second].seconds++;
       if (third) leaderboard[third].thirds++;
     });
+    const sortedPlayers = _.reverse(_.sortBy(playerNames, (player) => leaderboard[player].firsts));
     return (
       <div>
         <h1>Dominion Leaderboard</h1>
         <br />
-        {playerNames.map((playerName) => {
+        {sortedPlayers.map((playerName) => {
           return (
             <PlayerWithPlaces
+              key={playerName}
               playerName={playerName}
               firsts={leaderboard[playerName].firsts}
               seconds={leaderboard[playerName].seconds}
