@@ -152,6 +152,8 @@
       console.info(`fetching data from ${url}`);
       $.get(url).then((resp) => {
         this.setState({gameLogs: resp});
+        console.info('success! game logs are available via: window.__gameLogs__');
+        window.__gameLogs__ = resp;
       });
     }
 
