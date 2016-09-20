@@ -94,7 +94,7 @@ Leaderboard.propTypes = {
   playerNames: PropTypes.arrayOf(PropTypes.string).isRequired,
   gameLogs: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number.isRequired,
-    players: PropTypes.arrayOf(PropTypes.string).isRequired,
+    players: PropTypes.string.isRequired,
     raw_log: PropTypes.string.isRequired,
     log_url: PropTypes.string.isRequired,
     num_players: PropTypes.number.isRequired,
