@@ -2,3 +2,4 @@
 node_modules/**
 server/db/**
 server/logs/**
+server/github_hook_secret.txt
