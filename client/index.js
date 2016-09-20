@@ -67,7 +67,7 @@ class Leaderboard extends Component {
       };
     });
     gameLogs.forEach((log) => {
-      const { first, second, third } = logParser.getPlaces(log.raw_text);
+      const { first, second, third } = logParser.getPlaces(log.raw_log);
       if (first) leaderboard[first].firsts++;
       if (second) leaderboard[second].seconds++;
       if (third) leaderboard[third].thirds++;
