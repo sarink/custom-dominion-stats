@@ -33,8 +33,8 @@
 
     if (githubEvent === 'push') {
       res.sendStatus(200);
-      console.log('signature matched for push event! calling npm run deploy-prod');
-      var cmd = 'npm run deploy-prod';
+      console.log('signature matched for push event!');
+      var cmd = 'cd ' + REPO_ROOT + ' && sudo git remote update && sudo git reset --hard origin/master && sudo git pull';
       exec(cmd);
     } else {
       console.log('signature did not match');
