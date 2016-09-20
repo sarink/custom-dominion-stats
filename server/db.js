@@ -2,8 +2,6 @@
   var fs = require('fs');
   var sqlite3 = require('sqlite3').verbose();
 
-  var logger = require('./logger');
-
   var DB_FILE = __dirname + '/db/game_logs.sqlite';
   var DB_TABLE = 'game_logs';
   var DB_COL_ID = 'id';
@@ -14,7 +12,7 @@
 
   var dbExists = fs.existsSync(DB_FILE);
   if (!dbExists) {
-    logger.log('creating database', DB_FILE);
+    console.log('creating database', DB_FILE);
     fs.openSync(DB_FILE, 'w');
   }
 
@@ -29,7 +27,7 @@
                     DB_COL_LOG_URL + ' TEXT NOT NULL UNIQUE, ' +
                     DB_COL_NUM_PLAYERS + ' INTEGER ' + ')'
       );
-      logger.log('creating ' + DB_TABLE + ' table');
+      console.log('creating ' + DB_TABLE + ' table');
     }
   });
 

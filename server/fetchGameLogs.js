@@ -9,12 +9,10 @@
   var leftPad = require('left-pad');
 
   var db = require('./db');
-  var logger = require('./logger');
 
   var MAX_CONCURRENT_AJAX_REQUESTS = 20;
 
   var exit = function() {
-    logger.logFileStream.close();
     db.instance.close();
     process.exit();
   };
@@ -49,9 +47,10 @@
 
   var fetchGameLog = function(logUrl) {
     return new Promise(function(resolve, reject) {
-      logger.log('fetching game log:', logUrl);
+      console.log('fetching game log:', logUrl);
       request(logUrl, function(logError, logResponse, logBody) {
         if (!logError && doWeCareAboutThisGameLog(logBody)) {
+          console.log('--relevant log found! inserting:', logUrl);
           saveGameLogToDb(logUrl, logBody);
         }
         resolve();
@@ -63,7 +62,7 @@
     var baseUrl = 'http://dominion-game-logs.s3.amazonaws.com/';
     var gameLogsUrl = baseUrl + yyyymmdd + '/index.html';
 
-    logger.log('fetching game logs for date:', yyyymmdd);
+    console.log('fetching game logs for date:', yyyymmdd);
     return new Promise(function(resolve, reject) {
       request(gameLogsUrl, function(error, response, body) {
         var logUrls = [];
@@ -78,15 +77,15 @@
               logUrls.push(logUrl);
             }
           });
-          logger.log('number of game logs for date ' + yyyymmdd + ':', logUrls.length);
+          console.log('number of game logs for date ' + yyyymmdd + ':', logUrls.length);
 
           return resolve(Promise.map(logUrls, fetchGameLog, {concurrency: MAX_CONCURRENT_AJAX_REQUESTS}).then(function() {
-            logger.log('done fetching all game logs for date:', yyyymmdd);
-            logger.log('------------------------------------------------------------');
+            console.log('done fetching all game logs for date:', yyyymmdd);
+            console.log('------------------------------------------------------------');
           }));
 
         } else {
-          logger.log('error fetching game log urls for date:', yyyymmdd);
+          console.log('error fetching game log urls for date:', yyyymmdd);
         }
       });
     });
@@ -98,7 +97,7 @@
     var yyyymmddDayBeforeYesterday = dayBeforeYesterday.toISOString().slice(0, 10).replace(/-/g, '');
     dateStrings = [yyyymmddDayBeforeYesterday];
   } else if (!_.isArray(dateStrings)) {
-    logger.log('must pass an array of dateStrings in yyyymmdd format (ie, "node fetchAndSaveRelevantGameLogs.js \'20160721\' \'20160722\'")');
+    console.log('must pass an array of dateStrings in yyyymmdd format (ie, "node fetchAndSaveRelevantGameLogs.js \'20160721\' \'20160722\'")');
     exit();
   } else if (dateStrings[0] === 'seed') {
     console.log('seeding');
@@ -116,11 +115,10 @@
     }
   }
 
-
-  logger.log('executing with dateStrings:', dateStrings);
+  console.log('executing with dateStrings:', dateStrings);
 
   Promise.map(dateStrings, downloadAndWriteRelevantGameLogsForDate, {concurrency: 1}).then(function() {
-    logger.log('finished downloading and writing game logs for all dateStrings');
+    console.log('finished downloading and writing game logs for all dateStrings');
     exit();
   });
 }(process.argv.slice(2)));
