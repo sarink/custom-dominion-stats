@@ -5,7 +5,6 @@
   const $ = window.$;
   const _ = window._;
 
-
   const getURLParameter = (name) => {
     return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
   };
@@ -20,6 +19,24 @@
       numPlayers: 3,
     };
   }
+  params.devMode = getURLParameter('devMode');
+
+  // For production:
+  let BASE_URL = '/logs';
+
+  const DEV_MODE_LOCAL = 'local';
+  const DEV_MODE_PROD = 'prod';
+  // For dev mode with production data (you can use different url parameters locally and they'll pass-through to the server):
+  if (params.devMode === DEV_MODE_PROD) {
+    BASE_URL = 'http://crossorigin.me/http://sarink.net:4000/logs';
+    console.info(`devMode enabled and set to: ${DEV_MODE_PROD} - setting BASE_URL to ${BASE_URL}`);
+  }
+  // For dev mode with local sample data (NOTE: url parameters will not be taken into account):
+  else if (params.devMode === DEV_MODE_LOCAL) {
+    BASE_URL = '/sample_game_logs.json';
+    console.info(`devMode enabled and set to: ${DEV_MODE_LOCAL} - setting BASE_URL to ${BASE_URL}`);
+  }
+
 
   const logParser = (function() {
     const getPlaces = (log) => {
@@ -130,9 +147,9 @@
     }
 
     componentWillMount() {
-      const baseUrl = '/logs';
       const { playerNames, numPlayers } = this.state;
-      const url = `${baseUrl}?numPlayers=${numPlayers}&playerNames=${playerNames}`;
+      const url = `${BASE_URL}?numPlayers=${numPlayers}&playerNames=${playerNames}`;
+      console.info(`fetching data from ${url}`);
       $.get(url).then((resp) => {
         this.setState({gameLogs: resp});
       });
