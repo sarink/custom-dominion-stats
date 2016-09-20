@@ -2,19 +2,27 @@ const React = window.React;
 const { PropTypes, Component } = React;
 const _ = window._;
 
+// The Javascript API sucks really badly.
+// Call exec on the given regex, supplying the targetString, until no more matches are found.
+// Return all the matches.
+// Be sure to pass the 'g' flag to the supplied regex.
+const regexExecAll = (regex, targetString) => {
+  let results = [];
+  let regexResult;
+  while (regexResult = regex.exec(targetString)) { // eslint-disable-line no-cond-assign
+    results.push(regexResult);
+  }
+
+  return results;
+};
+
 // Returns the names of the player in an array
 const getPlayers = game => game.players.split(',');
 
 // Returns the names of the winner or winners in an array
 const getWinners = game => {
   var firstPlace = /1st place: (\w+)\n/g;
-  const winners = [];
-  let regexResult;
-  while (regexResult = firstPlace.exec(game.raw_log)) { // eslint-disable-line no-cond-assign
-    winners.push(regexResult[1]);
-  }
-
-  return winners;
+  return regexExecAll(firstPlace, game.raw_log).map(match => match[1]);
 };
 
 // Returns an array of the names of the events in the game - empty if none
@@ -45,6 +53,14 @@ const getScores = game => {
   }));
 };
 
+// Find the number of turns in the game
+// (by finding the turn with the highest number)
+const getTurnCount = game => {
+  const turnRegex = /: turn (\d+) ---/g;
+  const turnNumbers = regexExecAll(turnRegex, game.raw_log).map(match => parseInt(match[1], 10));
+  return _.max(turnNumbers);
+};
+
 class GameDetails extends Component {
   render() {
     const { game } = this.props;
@@ -71,6 +87,7 @@ class GameDetails extends Component {
             }
           </ul>
         </div>
+        <h3>Turn count: {getTurnCount(game)}</h3>
         <div>
           <h3>Piles</h3>
           { excludeBoringPiles(supplyPiles).join(', ') }
