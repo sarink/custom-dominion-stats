@@ -6,6 +6,7 @@
   var Promise = require('bluebird');
   var request = require('request');
   var _ = require('lodash');
+  var leftPad = require('left-pad');
 
   var db = require('./db');
   var logger = require('./logger');
@@ -99,7 +100,22 @@
   } else if (!_.isArray(dateStrings)) {
     logger.log('must pass an array of dateStrings in yyyymmdd format (ie, "node fetchAndSaveRelevantGameLogs.js \'20160721\' \'20160722\'")');
     exit();
+  } else if (dateStrings[0] === 'seed') {
+    console.log('seeding');
+    dateStrings = [];
+    for (var year = 2016; year <= 2016; year++) {
+      var yearStr = year.toString();
+      for (var month = 9; month <= 9; month++) {
+        var monthStr = leftPad(month, 2, 0);
+        for (var day = 1; day <= 20; day++ ) {
+          var dayStr = leftPad(day, 2, 0);
+          var dateString = yearStr + monthStr + dayStr;
+          dateStrings.push(dateString);
+        }
+      }
+    }
   }
+
 
   logger.log('executing with dateStrings:', dateStrings);
 
