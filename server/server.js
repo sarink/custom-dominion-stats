@@ -42,6 +42,12 @@
     }
   });
 
+  app.get('/last_updated_stats', function(req, res) {
+    var lastGitPull = fs.statSync(__dirname + '/../.git/FETCH_HEAD').mtime;
+    var lastDbUpdate = fs.statSync(db.DB_FILE).mtime;
+    res.send({ lastGitPull: lastGitPull, lastDbUpdate: lastDbUpdate });
+  });
+
   app.get('/logs', function(req, res) {
     var playerNames = req.query.playerNames;
     var numPlayers = req.query.numPlayers;
