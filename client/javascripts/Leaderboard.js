@@ -32,9 +32,10 @@ window.App.Leaderboard = (function() {
 
   class PlayerWithPlaces extends Component {
     render() {
-      const { playerName, firsts, seconds, thirds }  = this.props;
+      const { highlightPlayer, playerName, firsts, seconds, thirds }  = this.props;
+      const style = !highlightPlayer ? {color: 'lightgrey'} : null;
       return (
-        <div>
+        <div style={style}>
           <h3>{playerName}</h3>
           Firsts: {firsts}<br/>
           Seconds: {seconds}<br/>
@@ -48,38 +49,47 @@ window.App.Leaderboard = (function() {
     firsts: PropTypes.number.isRequired,
     seconds: PropTypes.number.isRequired,
     thirds: PropTypes.number.isRequired,
+    highlightPlayer: PropTypes.bool,
   };
 
 
   class Leaderboard extends Component {
     render() {
-      const { playerNames, gameLogs } = this.props;
+      const { highlightPlayers, gameLogs } = this.props;
+
       const leaderboard = {};
-      playerNames.forEach((player) => {
-        leaderboard[player] = {
-          firsts: 0,
-          seconds: 0,
-          thirds: 0,
-        };
-      });
+      const newPlayerWithPlaces = { firsts: 0, seconds: 0, thirds: 0 };
+
       gameLogs.forEach((log) => {
         const { first, second, third } = logParser.getPlaces(log.raw_log);
-        if (first) leaderboard[first].firsts++;
-        if (second) leaderboard[second].seconds++;
-        if (third) leaderboard[third].thirds++;
+        if (first) {
+          leaderboard[first] = leaderboard[first] || Object.assign({}, newPlayerWithPlaces);
+          leaderboard[first].firsts++;
+        }
+        if (second) {
+          leaderboard[second] = leaderboard[second] || Object.assign({}, newPlayerWithPlaces);
+          leaderboard[second].seconds++;
+        }
+        if (third) {
+          leaderboard[third] = leaderboard[third] || Object.assign({}, newPlayerWithPlaces);
+          leaderboard[third].thirds++;
+        }
       });
-      const sortedPlayers = _.reverse(_.sortBy(playerNames, (player) => leaderboard[player].firsts));
+
+      const sortedPlayers = _.reverse(_.sortBy(_.keys(leaderboard), (player) => leaderboard[player].firsts));
+
       return (
         <div>
           <h1>Leaderboard</h1>
           {sortedPlayers.map((playerName) => {
             return (
               <PlayerWithPlaces
-              key={playerName}
-              playerName={playerName}
-              firsts={leaderboard[playerName].firsts}
-              seconds={leaderboard[playerName].seconds}
-              thirds={leaderboard[playerName].thirds}
+                key={playerName}
+                playerName={playerName}
+                firsts={leaderboard[playerName].firsts}
+                seconds={leaderboard[playerName].seconds}
+                thirds={leaderboard[playerName].thirds}
+                highlightPlayer={highlightPlayers.indexOf(playerName) !== -1}
               />
             );
           })}
@@ -88,7 +98,7 @@ window.App.Leaderboard = (function() {
     }
   }
   Leaderboard.propTypes = {
-    playerNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+    highlightPlayers: PropTypes.string,
     gameLogs: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.number.isRequired,
       players: PropTypes.string.isRequired,

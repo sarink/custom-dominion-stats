@@ -69,7 +69,7 @@ window.App.Root = (function() {
       const { GameExplorer, Leaderboard } = window.App;
       return (
         <div>
-          {showLeaderboard ? <Leaderboard playerNames={playerNames.split(',')} gameLogs={gameLogs} /> : null}
+          {showLeaderboard ? <window.App.Leaderboard highlightPlayers={playerNames} gameLogs={gameLogs} /> : null}
           <br /><hr />
           {showGameExplorer ? <GameExplorer gameLogs={gameLogs} /> : null}
         </div>
