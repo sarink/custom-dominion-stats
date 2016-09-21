@@ -63,7 +63,7 @@ window.App.Root = (function() {
         console.info('success! game logs are available via: window.__gameLogs__');
         window.__gameLogs__ = analyzedGameLogs;
         const lastDbLogUrl = _.last(_.sortBy(analyzedGameLogs, 'log_url')).log_url;
-        this.setState({gameLogs: analyzedGameLogs, lastDbLogUrl});
+        this.setState({gameLogs: analyzedGameLogs});
       }).fail((resp) => {
         console.info('error loading!', resp);
       }).always(() => {
@@ -71,8 +71,8 @@ window.App.Root = (function() {
       });
 
       $.get(LAST_UPDATED_STATS_URL).then((resp) => {
-        const { lastGitPull, lastDbUpdate } = resp;
-        this.setState({ lastGitPull, lastDbUpdate });
+        const { lastGitPull, lastDbUpdate, lastDbLogUrl } = resp;
+        this.setState({ lastGitPull, lastDbUpdate, lastDbLogUrl });
       });
     }
 
@@ -81,24 +81,26 @@ window.App.Root = (function() {
 
       let content = null;
 
-      if (loading) content = <div>Loading...</div>;
-
       const showGameExplorer = !_.isEmpty(gameLogs);
       const showLeaderboard = !_.isEmpty(playerNames) && !_.isEmpty(gameLogs);
       const showLastUpdatedStats = !_.isEmpty(lastGitPull) || !_.isEmpty(lastDbUpdate) || !_.isEmpty(lastDbLogUrl);
-      if (!showGameExplorer && !showLeaderboard) content = <div>Nothing to display :(</div>;
-
-      content = (
-        <div>
-          {showLeaderboard ? <window.App.Leaderboard highlightPlayers={playerNames} gameLogs={gameLogs} /> : null}
-          <br /><hr />
-          {showGameExplorer ? <window.App.GameExplorer gameLogs={gameLogs} /> : null}
-        </div>
-      );
+      if (loading) {
+        content = 'Loading...';
+      } else if (!showGameExplorer && !showLeaderboard) {
+        content = 'Nothing to display :(';
+      } else {
+        content = [
+          showLeaderboard ? <window.App.Leaderboard highlightPlayers={playerNames} gameLogs={gameLogs} /> : null,
+          <br />,
+          <hr />,
+          showGameExplorer ? <window.App.GameExplorer gameLogs={gameLogs} /> : null,
+        ];
+      }
 
       return (
         <div>
           {showLastUpdatedStats ? <window.App.LastUpdatedStats lastGitPull={lastGitPull} lastDbUpdate={lastDbUpdate} lastDbLogUrl={lastDbLogUrl}/> : null}
+          <br />
           {content}
         </div>
       );

@@ -45,7 +45,19 @@
   app.get('/last_updated_stats', function(req, res) {
     var lastGitPull = fs.statSync(__dirname + '/../.git/FETCH_HEAD').mtime;
     var lastDbUpdate = fs.statSync(db.DB_FILE).mtime;
-    res.send({ lastGitPull: lastGitPull, lastDbUpdate: lastDbUpdate });
+    var lastDbLogUrl = null;
+    var stmt = 'SELECT * FROM ' + db.DB_TABLE + ' ORDER BY ' + db.COL_LOG_URL + ' DESC LIMIT 1';
+    db.instance.each(
+      stmt,
+      [],
+      function callback(err, row) {
+        lastDbLogUrl = row.log_url;
+      },
+      function complete() {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify({ lastDbLogUrl: lastDbLogUrl, lastGitPull: lastGitPull, lastDbUpdate: lastDbUpdate }));
+      }
+    );
   });
 
   app.get('/logs', function(req, res) {
