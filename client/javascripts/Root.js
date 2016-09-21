@@ -52,9 +52,11 @@ window.App.Root = (function() {
       if (this.state.playerNames) url = `${url}&playerNames=${this.state.playerNames}`;
       console.info(`fetching data from ${url}`);
       $.get(url).always((resp) => {
+        const analyzedGames = resp.map(game => window.App.GameAnalysis.addAnalysis(game));
+
         console.info('success! game logs are available via: window.__gameLogs__');
-        window.__gameLogs__ = resp || [];
-        this.setState({loading: false, gameLogs: resp});
+        window.__gameLogs__ = analyzedGames || [];
+        this.setState({loading: false, gameLogs: analyzedGames});
       });
     }
 
