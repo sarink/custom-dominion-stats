@@ -35,9 +35,8 @@ To see the structure, and all available game logs, just visit `/logs`.
 
 #### URL Parameters
 When you hit the `/logs` endpoint on `http://sarink.net:4000`, you can pass `numPlayers` and `playerNames` as query string parameters.
-If you pass these to `/client/index.html?...`, they'll directly pass-through to the server. Otherwise, there are fallbacks/defaults hard coded in `index.js`.
-
-**You must pass either _none_ or _both_ of these parameters**
+If you pass these to `/client/index.html?...`, they'll directly pass-through to the server. Otherwise, if you don't pass either of these,
+the default will be `?numPlayers=3&playerNames=sarink,cherrypeel,nisse038`.
 
 `numPlayers` - this will only match game logs containing this number of players. example: `/logs?numPlayers=3`
 

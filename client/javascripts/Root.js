@@ -6,11 +6,12 @@ window.App.Root = (function() {
     return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
   };
 
-  let params = {
+  let params = { playerNames: null, numPlayers: null };
+  params = {
     playerNames: getURLParameter('playerNames'),
     numPlayers: getURLParameter('numPlayers'),
   };
-  if (params.playerNames == null || params.numPlayers == null) {
+  if (params.playerNames == null && params.numPlayers == null) {
     params = {
       playerNames: 'sarink,cherrypeel,nisse038',
       numPlayers: 3,
@@ -45,23 +46,32 @@ window.App.Root = (function() {
     }
 
     componentWillMount() {
-      const { playerNames, numPlayers } = this.state;
-      const url = `${BASE_URL}?numPlayers=${numPlayers}&playerNames=${playerNames}`;
+      let url = `${BASE_URL}?`;
+      if (this.state.numPlayers) url = `${url}&numPlayers=${this.state.numPlayers}`;
+      if (this.state.playerNames) url = `${url}&playerNames=${this.state.playerNames}`;
       console.info(`fetching data from ${url}`);
       $.get(url).then((resp) => {
-        this.setState({gameLogs: resp});
         console.info('success! game logs are available via: window.__gameLogs__');
         window.__gameLogs__ = resp;
+        this.setState({gameLogs: resp});
       });
     }
 
     render() {
-      const { playerNames, gameLogs } = this.state;
+      const { gameLogs, playerNames } = this.state;
+      const showGameExplorer = !_.isEmpty(gameLogs);
+      const showLeaderboard = !_.isEmpty(playerNames) && !_.isEmpty(gameLogs);
+      console.log('gameLogs', gameLogs);
+      console.log('playerNames', playerNames);
+      console.log('showLeaderboard', showLeaderboard);
+      console.log('showGameExplorer', showGameExplorer);
+      if (!showGameExplorer || !showLeaderboard) return <div>Loading...</div>;
+      const { GameExplorer, Leaderboard } = window.App;
       return (
         <div>
-          <window.App.Leaderboard playerNames={playerNames.split(',')} gameLogs={gameLogs} />
+          {showLeaderboard ? <Leaderboard playerNames={playerNames.split(',')} gameLogs={gameLogs} /> : null}
           <br /><hr />
-          <window.App.GameExplorer gameLogs={gameLogs} />
+          {showGameExplorer ? <GameExplorer gameLogs={gameLogs} /> : null}
         </div>
       );
     }
