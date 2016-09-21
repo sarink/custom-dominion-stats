@@ -9,7 +9,7 @@ window.App.GameExplorer = (function() {
       const actionPlays = _.filter(_.flatten(_.map(game.playByPlay, 'happenings')), h => h.happeningType === 'plays_action');
       const groupedActionsByAction = _.groupBy(actionPlays, 'action');
       const mostPlayedAction = _.maxBy(Object.keys(groupedActionsByAction), action => groupedActionsByAction[action].length);
-      const mostPlayedActionCount = groupedActionsByAction[mostPlayedAction].length;
+      const mostPlayedActionCount = (groupedActionsByAction[mostPlayedAction] || []).length;
 
       return (
         <div>
