@@ -6,6 +6,11 @@ window.App.GameExplorer = (function() {
     render() {
       const { game } = this.props;
 
+      const actionPlays = _.filter(_.flatten(_.map(game.playByPlay, 'happenings')), h => h.happeningType === 'plays_action');
+      const groupedActionsByAction = _.groupBy(actionPlays, 'action');
+      const mostPlayedAction = _.maxBy(Object.keys(groupedActionsByAction), action => groupedActionsByAction[action].length);
+      const mostPlayedActionCount = groupedActionsByAction[mostPlayedAction].length;
+
       return (
         <div>
           <h2>Game {game.id}</h2>
@@ -24,6 +29,10 @@ window.App.GameExplorer = (function() {
                 _.map(game.scores, (score, player) => <li key={player}>{player}: {score}</li>)
               }
             </ul>
+          </div>
+          <div>
+            <h3>Most played action</h3>
+            {mostPlayedAction} ({mostPlayedActionCount} plays)
           </div>
           <h3>Turn count: {game.turnCount}</h3>
           <div>

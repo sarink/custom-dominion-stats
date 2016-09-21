@@ -15,6 +15,8 @@ window.App.GameAnalysis = (function() {
     return results;
   };
 
+  const GAME_OVER_MARKER = '------------ Game Over ------------';
+
   // Returns the names of the player in an array
   const getPlayers = game => game.players.split(',');
 
@@ -39,9 +41,8 @@ window.App.GameAnalysis = (function() {
   const getScores = game => {
     // This is lame perf thing, I just don't see why we should search through the entire log when
     // we know the points always comes after the "game over" marker
-    const gameOverMarker = '------------ Game Over ------------';
     const log = game.raw_log;
-    const gameResultsIndex = log.indexOf(gameOverMarker) + gameOverMarker.length;
+    const gameResultsIndex = log.indexOf(GAME_OVER_MARKER) + GAME_OVER_MARKER.length;
     const gameResults = log.substring(gameResultsIndex);
 
     const players = getPlayers(game);
@@ -60,6 +61,49 @@ window.App.GameAnalysis = (function() {
     return _.max(turnNumbers);
   };
 
+  const getPlayByPlay = game => {
+    const log = game.raw_log;
+    // This capture group around the whole thing is important for the call to split to work
+    // properly when we split the log into turns. If it's not there, the stuff that we're splitting on
+    // (the turn headers) won't be included in the split results. Don't remove it.
+    const turnHeaderRegex = /(---------- .*?: turn .*? ----------)/;
+    const gameStartIndex = log.search(turnHeaderRegex);
+    const gameEndIndex = log.indexOf(GAME_OVER_MARKER);
+
+    const gameplayLog = log.substring(gameStartIndex, gameEndIndex);
+
+    // Slice off the first result- our delimiter matches on index 0, so split() decides the first
+    // chunk should be everything before the delimiter - an empty string.
+    const splitTurns = gameplayLog.split(turnHeaderRegex).slice(1);
+    // This is an array of turn logs, i.e. each item is the log that includes the "turn header"
+    // (which tells you which player and turn # it is) and everything that happened on that turn
+    const rawTurns = _.map(_.chunk(splitTurns, 2), turnChunks => turnChunks.join(''));
+
+    const interestingPiles = excludeBoringPiles(getSupplyPiles(game));
+    const playedInterestingCardRegex = new RegExp(`(.*?) - plays (${interestingPiles.join('|')})$`);
+
+    const parseTurn = turnLog => {
+      const lines = turnLog.split('\n');
+      const turnHeader = lines[0];
+      const [playerName, turnName] = turnHeader.match(/---------- (.*?): turn (.*?) ----------/).slice(1);
+
+      // For now, let's only track one kind of "happening": a player *plays* a card that's in the
+      // list of interesting supply piles. Coincidentally, this should mostly exclude treasures,
+      // because we're only going to look for lines of the form "$player - plays $cardName", whereas
+      // often when the player plays treasures it looks like "$player - plays 2 Fool's Gold, 2 Copper, 1 Gold"
+      const happenings = lines.slice(1).reduce((acc, line) => {
+        const matchResult = line.match(playedInterestingCardRegex);
+        // TODO 'plays_action' is a magic string
+        return matchResult ? [...acc, { happeningType: 'plays_action', player: matchResult[1], action: matchResult[2] }]
+                           : acc;
+      }, []);
+
+      return { player: playerName, turn: turnName, happenings };
+    };
+
+    return rawTurns.map(parseTurn);
+  };
+
   // Expects a game object with
   const addAnalysis = game => {
     return Object.assign(
@@ -75,7 +119,8 @@ window.App.GameAnalysis = (function() {
         supplyPiles: getSupplyPiles(game),
         interestingSupplyPiles: excludeBoringPiles(getSupplyPiles(game)),
         events: getEvents(game),
-        turnCount: getTurnCount(game)
+        turnCount: getTurnCount(game),
+        playByPlay: getPlayByPlay(game)
       }
     );
   };
