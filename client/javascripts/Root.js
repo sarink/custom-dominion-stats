@@ -42,6 +42,7 @@ window.App.Root = (function() {
         numPlayers: params.numPlayers,
         playerNames: params.playerNames,
         gameLogs: [],
+        loading: true,
       };
     }
 
@@ -50,28 +51,27 @@ window.App.Root = (function() {
       if (this.state.numPlayers) url = `${url}&numPlayers=${this.state.numPlayers}`;
       if (this.state.playerNames) url = `${url}&playerNames=${this.state.playerNames}`;
       console.info(`fetching data from ${url}`);
-      $.get(url).then((resp) => {
+      $.get(url).always((resp) => {
         console.info('success! game logs are available via: window.__gameLogs__');
-        window.__gameLogs__ = resp;
-        this.setState({gameLogs: resp});
+        window.__gameLogs__ = resp || [];
+        this.setState({loading: false, gameLogs: resp});
       });
     }
 
     render() {
-      const { gameLogs, playerNames } = this.state;
+      const { loading, gameLogs, playerNames } = this.state;
+
+      if (loading) return <div>Loading...</div>;
+
       const showGameExplorer = !_.isEmpty(gameLogs);
       const showLeaderboard = !_.isEmpty(playerNames) && !_.isEmpty(gameLogs);
-      console.log('gameLogs', gameLogs);
-      console.log('playerNames', playerNames);
-      console.log('showLeaderboard', showLeaderboard);
-      console.log('showGameExplorer', showGameExplorer);
-      if (!showGameExplorer || !showLeaderboard) return <div>Loading...</div>;
-      const { GameExplorer, Leaderboard } = window.App;
+      if (!showGameExplorer && !showLeaderboard) return <div>Nothing to display :(</div>;
+
       return (
         <div>
           {showLeaderboard ? <window.App.Leaderboard highlightPlayers={playerNames} gameLogs={gameLogs} /> : null}
           <br /><hr />
-          {showGameExplorer ? <GameExplorer gameLogs={gameLogs} /> : null}
+          {showGameExplorer ? <window.App.GameExplorer gameLogs={gameLogs} /> : null}
         </div>
       );
     }
