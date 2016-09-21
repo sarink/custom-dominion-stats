@@ -58,9 +58,11 @@ window.App.Root = (function() {
       if (this.state.playerNames) logsUrl = `${logsUrl}&playerNames=${this.state.playerNames}`;
       console.info(`fetching data from ${logsUrl}`);
       $.get(logsUrl).done((resp) => {
+        const gameLogs = resp;
         console.info('success! game logs are available via: window.__gameLogs__');
-        window.__gameLogs__ = resp;
-        this.setState({gameLogs: resp});
+        window.__gameLogs__ = gameLogs;
+        const lastDbLogUrl = _.last(_.sortBy(gameLogs, 'log_url')).log_url;
+        this.setState({gameLogs, lastDbLogUrl});
       }).fail((resp) => {
         console.info('error loading!', resp);
       }).always(() => {
@@ -74,7 +76,7 @@ window.App.Root = (function() {
     }
 
     render() {
-      const { loading, gameLogs, playerNames, lastGitPull, lastDbUpdate } = this.state;
+      const { loading, gameLogs, playerNames, lastGitPull, lastDbUpdate, lastDbLogUrl } = this.state;
 
       let content = null;
 
@@ -82,7 +84,7 @@ window.App.Root = (function() {
 
       const showGameExplorer = !_.isEmpty(gameLogs);
       const showLeaderboard = !_.isEmpty(playerNames) && !_.isEmpty(gameLogs);
-      const showLastUpdatedStats = !_.isEmpty(lastGitPull) || !_.isEmpty(lastDbUpdate);
+      const showLastUpdatedStats = !_.isEmpty(lastGitPull) || !_.isEmpty(lastDbUpdate) || !_.isEmpty(lastDbLogUrl);
       if (!showGameExplorer && !showLeaderboard) content = <div>Nothing to display :(</div>;
 
       content = (
@@ -95,7 +97,7 @@ window.App.Root = (function() {
 
       return (
         <div>
-          {showLastUpdatedStats ? <window.App.LastUpdatedStats lastGitPull={lastGitPull} lastDbUpdate={lastDbUpdate} /> : null}
+          {showLastUpdatedStats ? <window.App.LastUpdatedStats lastGitPull={lastGitPull} lastDbUpdate={lastDbUpdate} lastDbLogUrl={lastDbLogUrl}/> : null}
           {content}
         </div>
       );

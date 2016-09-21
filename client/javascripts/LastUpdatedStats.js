@@ -4,7 +4,7 @@ window.App.LastUpdatedStats = (function() {
 
   class LastUpdatedStats extends Component {
     render() {
-      const { lastGitPull, lastDbUpdate } = this.props;
+      const { lastGitPull, lastDbUpdate, lastDbLogUrl } = this.props;
       const style = { float: 'right' };
       const lastGitPullDate = new Date(lastGitPull);
       const lastDbUpdateDate = new Date(lastDbUpdate);
@@ -12,6 +12,7 @@ window.App.LastUpdatedStats = (function() {
         <div style={style}>
           <div>Last git pull: {lastGitPullDate.toString()}</div>
           <div>Last db update: {lastDbUpdateDate.toString()}</div>
+          <div>Last db log url: <a target="_blank" href={lastDbLogUrl}>{lastDbLogUrl}</a></div>
         </div>
       );
     }
@@ -19,6 +20,7 @@ window.App.LastUpdatedStats = (function() {
   LastUpdatedStats.propTypes = {
     lastGitPull: PropTypes.string,
     lastDbUpdate: PropTypes.string,
+    lastDbLogUrl: PropTypes.string,
   };
 
   return LastUpdatedStats;
