@@ -54,12 +54,12 @@
     var lastGitPull = fs.statSync(__dirname + '/../.git/FETCH_HEAD').mtime;
     var lastDbUpdate = fs.statSync(db.DB_FILE).mtime;
     var lastDbLogUrl = null;
-    var stmt = 'SELECT * FROM ' + db.DB_TABLE + ' ORDER BY ' + db.COL_LOG_URL + ' DESC LIMIT 1';
+    var stmt = 'SELECT * FROM ' + db.DB_TABLE + ' ORDER BY ' + db.DB_COL_LOG_URL + ' DESC LIMIT 1';
     db.instance.each(
       stmt,
       [],
       function callback(err, row) {
-        lastDbLogUrl = row.log_url;
+        lastDbLogUrl = row[db.DB_COL_LOG_URL];
       },
       function complete() {
         res.setHeader('Content-Type', 'application/json');
