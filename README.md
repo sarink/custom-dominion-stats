@@ -2,7 +2,7 @@
 
 1. Navigate to `http://sarink.net:4000`
 
-2. Play around with the `window.__gameLogs__` variable
+2. Play around with the `window.__games__` variable
 
 
 ## Setup

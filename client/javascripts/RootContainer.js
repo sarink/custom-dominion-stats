@@ -2,6 +2,10 @@ window.App.Root = (function() {
   const { React, $, _ } = window;
   const { PropTypes, Component } = React;
 
+  // TODO we can't require the components this way, I guess, bc faux modules
+  const { GameAnalysis } = window.App;
+
+
   const getURLParameter = (name) => {
     return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
   };
@@ -26,15 +30,13 @@ window.App.Root = (function() {
     console.info(`devMode enabled and set to: ${DEV_MODE_LOCAL} - setting LOGS_URL to ${LOGS_URL}`);
   }
 
-
-
   class RootContainer extends Component {
     constructor() {
       super();
       this.state = {
         numPlayers: null,
         playerNames: null,
-        gameLogs: [],
+        games: {},
         loading: true,
         lastGitPull: null,
         lastDbUpdate: null,
@@ -42,15 +44,14 @@ window.App.Root = (function() {
     }
 
     componentWillMount() {
-      const logsUrl = `${LOGS_URL}`;
-      console.info(`fetching data from ${logsUrl}`);
-      $.get(logsUrl).done((resp) => {
-        const gameLogs = resp;
-        const analyzedGameLogs = gameLogs.map(game => window.App.GameAnalysis.addAnalysis(game));
-        console.info('success! game logs are available via: window.__gameLogs__');
-        window.__gameLogs__ = analyzedGameLogs;
-        const lastDbLogUrl = _.last(_.sortBy(analyzedGameLogs, 'log_url')).log_url;
-        this.setState({gameLogs: analyzedGameLogs});
+      console.info(`fetching data from ${LOGS_URL}`);
+      $.get(LOGS_URL).done((resp) => {
+        const rawGamesArr = resp;
+        const analyzedGames = {};
+        rawGamesArr.forEach(game => analyzedGames[game.id] = GameAnalysis.analyzeGame(game));
+        console.info('success! games have been analyzed and are available via: window.__games__');
+        window.__games__ = analyzedGames;
+        this.setState({games: analyzedGames});
       }).fail((resp) => {
         console.info('error loading!', resp);
       }).always(() => {
@@ -63,13 +64,17 @@ window.App.Root = (function() {
       });
     }
 
+    handlePlayerNamesChange = (event) => {
+      this.setState({playerNames: event.target.value});
+    }
+
     render() {
-      const { loading, gameLogs, playerNames, lastGitPull, lastDbUpdate, lastDbLogUrl } = this.state;
+      const { loading, games, playerNames, lastGitPull, lastDbUpdate, lastDbLogUrl } = this.state;
 
       let content = null;
 
-      const showGameExplorer = !_.isEmpty(gameLogs);
-      const showLeaderboard = !_.isEmpty(playerNames) && !_.isEmpty(gameLogs);
+      const showGameExplorer = !_.isEmpty(games);
+      const showLeaderboard = !_.isEmpty(playerNames) && !_.isEmpty(games);
       const showLastUpdatedStats = !_.isEmpty(lastGitPull) || !_.isEmpty(lastDbUpdate) || !_.isEmpty(lastDbLogUrl);
       if (loading) {
         content = 'Loading...';
@@ -77,14 +82,17 @@ window.App.Root = (function() {
         content = 'Nothing to display :(';
       } else {
         content = [
-          showLeaderboard ? <window.App.Leaderboard key="leaderboard" highlightPlayers={playerNames} gameLogs={gameLogs} /> : null,
-          showGameExplorer ? <window.App.GameExplorer key="gameExplorer" gameLogs={gameLogs} /> : null,
+          showLeaderboard ? <window.App.Leaderboard key="leaderboard" highlightPlayers={playerNames} games={games} /> : null,
+          showGameExplorer ? <window.App.GameExplorer key="gameExplorer" games={games} /> : null,
         ];
       }
 
       return (
         <div className="rootContainer">
           <div className="rootContainer-content">
+            <div className="rootContainer-globalFilters">
+              Player names filter (player1,player2,etc): <input onChange={this.handlePlayerNamesChange} type="text" />
+            </div>
             {content}
           </div>
           <div className="rootContainer-lastUpdatedStats">

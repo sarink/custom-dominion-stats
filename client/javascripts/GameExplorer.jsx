@@ -81,11 +81,12 @@ window.App.GameExplorer = (function() {
 
   GameDetails.propTypes = {
     game: PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      players: PropTypes.string.isRequired,
-      raw_log: PropTypes.string.isRequired,
-      log_url: PropTypes.string.isRequired,
-      num_players: PropTypes.number.isRequired,
+      rawData: PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        raw_log: PropTypes.string.isRequired,
+        log_url: PropTypes.string.isRequired,
+        num_players: PropTypes.number.isRequired,
+      }),
     })
   };
 
@@ -104,9 +105,8 @@ window.App.GameExplorer = (function() {
     }
 
     render() {
-      const games = this.props.gameLogs;
-
-      const selectedGame = this.state.selectedGameId ? _.find(this.props.gameLogs, { id: this.state.selectedGameId }) : null;
+      const { games } = this.props;
+      const selectedGame = games[this.state.selectedGameId];
 
       return (
         <div>
@@ -116,7 +116,7 @@ window.App.GameExplorer = (function() {
             defaultValue=""
           >
             <option key="default" value="">Select a game</option>
-            { games.map(g => <option key={g.id} value={g.id}>Game {g.id}</option>) }
+            { _.keys(games).map(id => <option key={id} value={id}>Game {id}</option>) }
           </select>
 
           { selectedGame ? <GameDetails game={selectedGame} /> : null }
@@ -126,13 +126,7 @@ window.App.GameExplorer = (function() {
   }
 
   GameExplorer.propTypes = {
-    gameLogs: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      players: PropTypes.string.isRequired,
-      raw_log: PropTypes.string.isRequired,
-      log_url: PropTypes.string.isRequired,
-      num_players: PropTypes.number.isRequired,
-    })),
+    games: PropTypes.object.isRequired,
   };
 
   return GameExplorer;

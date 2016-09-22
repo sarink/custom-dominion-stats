@@ -54,13 +54,15 @@ window.App.Leaderboard = (function() {
 
   class Leaderboard extends Component {
     render() {
-      const { highlightPlayers, gameLogs } = this.props;
+      let { highlightPlayers, games } = this.props;
+      // TODO wtf is wrong with defaultProps?????
+      highlightPlayers = highlightPlayers || '';
 
       const leaderboard = {};
       const newPlayerWithPlaces = { firsts: 0, seconds: 0, thirds: 0 };
 
-      gameLogs.forEach((log) => {
-        const { first, second, third } = logParser.getPlaces(log.raw_log);
+      _.each(games, (game) => {
+        const { first, second, third } = logParser.getPlaces(game.rawData.raw_log);
         if (first) {
           leaderboard[first] = leaderboard[first] || Object.assign({}, newPlayerWithPlaces);
           leaderboard[first].firsts++;
@@ -98,13 +100,7 @@ window.App.Leaderboard = (function() {
   }
   Leaderboard.propTypes = {
     highlightPlayers: PropTypes.string,
-    gameLogs: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      players: PropTypes.string.isRequired,
-      raw_log: PropTypes.string.isRequired,
-      log_url: PropTypes.string.isRequired,
-      num_players: PropTypes.number.isRequired,
-    })),
+    games: PropTypes.object.isRequired,
   };
 
   return Leaderboard;
