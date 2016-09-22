@@ -25,16 +25,13 @@
 
 `http://localhost:8000/client/?devMode=local` - this will load game logs from the local sample json file
 
-In addition, there are some URL parameters that will get passed to the server for initially filtering game logs, see the "Usage" section below.
-
-
 ## Retrieving logs from the server
 
 #### Structure and architecture
 To see the structure, and all available game logs, just visit `/logs`.
 
 #### URL Parameters
-When you hit the `/logs` endpoint on `http://sarink.net:4000`, you can pass `numPlayers` and `playerNames` as query string parameters.
+When you hit the `/logs` endpoint on `http://sarink.net:4000`, you may pass `numPlayers` and `playerNames` as query string parameters.
 
 `numPlayers` - this will only match game logs containing this number of players. example: `/logs?numPlayers=3`
 
