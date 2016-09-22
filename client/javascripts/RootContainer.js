@@ -6,18 +6,7 @@ window.App.Root = (function() {
     return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
   };
 
-  let params = { playerNames: null, numPlayers: null };
-  params = {
-    playerNames: getURLParameter('playerNames'),
-    numPlayers: getURLParameter('numPlayers'),
-  };
-  if (params.playerNames == null && params.numPlayers == null) {
-    params = {
-      playerNames: 'sarink,cherrypeel,nisse038',
-      numPlayers: 3,
-    };
-  }
-  params.devMode = getURLParameter('devMode');
+  const devMode = getURLParameter('devMode');
 
   // For production:
   let LOGS_URL = '/logs';
@@ -26,13 +15,13 @@ window.App.Root = (function() {
   const DEV_MODE_LOCAL = 'local';
   const DEV_MODE_PROD = 'prod';
   // For dev mode with production data (you can use different url parameters locally and they'll pass-through to the server):
-  if (params.devMode === DEV_MODE_PROD) {
+  if (devMode === DEV_MODE_PROD) {
     LOGS_URL = 'http://crossorigin.me/http://sarink.net:4000/logs';
     LAST_UPDATED_STATS_URL = 'http://crossorigin.me/http://sarink.net:4000/last_updated_stats';
     console.info(`devMode enabled and set to: ${DEV_MODE_PROD} - setting LOGS_URL to ${LOGS_URL}`);
   }
   // For dev mode with local sample data (NOTE: url parameters will not be taken into account):
-  else if (params.devMode === DEV_MODE_LOCAL) {
+  else if (devMode === DEV_MODE_LOCAL) {
     LOGS_URL = '/sample_game_logs.json';
     console.info(`devMode enabled and set to: ${DEV_MODE_LOCAL} - setting LOGS_URL to ${LOGS_URL}`);
   }
@@ -43,8 +32,8 @@ window.App.Root = (function() {
     constructor() {
       super();
       this.state = {
-        numPlayers: params.numPlayers,
-        playerNames: params.playerNames,
+        numPlayers: null,
+        playerNames: null,
         gameLogs: [],
         loading: true,
         lastGitPull: null,
@@ -53,9 +42,7 @@ window.App.Root = (function() {
     }
 
     componentWillMount() {
-      let logsUrl = `${LOGS_URL}?`;
-      if (this.state.numPlayers) logsUrl = `${logsUrl}&numPlayers=${this.state.numPlayers}`;
-      if (this.state.playerNames) logsUrl = `${logsUrl}&playerNames=${this.state.playerNames}`;
+      const logsUrl = `${LOGS_URL}`;
       console.info(`fetching data from ${logsUrl}`);
       $.get(logsUrl).done((resp) => {
         const gameLogs = resp;
