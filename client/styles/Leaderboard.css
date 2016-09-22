@@ -1,0 +1,16 @@
+.leaderboard {
+
+}
+
+.leaderboard-title {
+  margin-top: 0;
+}
+
+.leaderboard-playerWithPlaces {
+  color: lightgrey;
+}
+
+.leaderboard-playerWithPlaces-highlightPlayer,
+.leaderboard-playerWithPlaces:hover {
+  color: grey;
+}

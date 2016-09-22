@@ -33,9 +33,8 @@ window.App.Leaderboard = (function() {
   class PlayerWithPlaces extends Component {
     render() {
       const { highlightPlayer, playerName, firsts, seconds, thirds }  = this.props;
-      const style = !highlightPlayer ? {color: 'lightgrey'} : null;
       return (
-        <div style={style}>
+        <div className={`leaderboard-playerWithPlaces${-highlightPlayer ? 'highlightPlayer' : ''}`}>
           <h3>{playerName}</h3>
           Firsts: {firsts}<br/>
           Seconds: {seconds}<br/>
@@ -79,8 +78,8 @@ window.App.Leaderboard = (function() {
       const sortedPlayers = _.reverse(_.sortBy(_.keys(leaderboard), (player) => leaderboard[player].firsts));
 
       return (
-        <div>
-          <h1>Leaderboard</h1>
+        <div className="leaderboard">
+          <h1 className="leaderboard-title">Leaderboard</h1>
           {sortedPlayers.map((playerName) => {
             return (
               <PlayerWithPlaces
