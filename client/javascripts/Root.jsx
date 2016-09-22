@@ -17,11 +17,15 @@ window.App.Root = (function() {
     }
 
     handlePlayerNamesChange = (event) => {
-      const playerNames = event.target.value.split(',');
-      const filteredGames = this.props.allGames.filter(game => {
-        return _.difference(game.playerList, playerNames).length === 0 && game.playerList.length === playerNames.length;
-      });
-      this.setState({playerNames, filteredGames});
+      if (_.isEmpty(event.target.value)) {
+        this.setState({playerNames: '', filteredGames: this.props.allGames});
+      } else {
+        const playerNames = event.target.value.split(',');
+        const filteredGames = this.props.allGames.filter(game => {
+          return _.difference(game.playerList, playerNames).length === 0 && game.playerList.length === playerNames.length;
+        });
+        this.setState({playerNames, filteredGames});
+      }
     }
 
     render() {
@@ -37,7 +41,7 @@ window.App.Root = (function() {
         content = 'Nothing to display :(';
       } else {
         content = [
-          showLeaderboard ? <window.App.Leaderboard key="leaderboard" highlightPlayers={playerNames.join(',')} games={filteredGames} /> : null,
+          showLeaderboard ? <window.App.Leaderboard key="leaderboard" highlightPlayers={playerNames ? playerNames.join(',') : ''} games={filteredGames} /> : null,
           showGameExplorer ? <window.App.GameExplorer key="gameExplorer" games={filteredGames} /> : null,
         ];
       }
