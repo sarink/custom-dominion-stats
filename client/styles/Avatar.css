@@ -1,0 +1,10 @@
+.avatar {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  text-align: center;
+  background-size: 130px;
+  width: 130px;
+  height: 159px;
+  font-weight: bold;
+}
