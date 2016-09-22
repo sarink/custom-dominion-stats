@@ -1,5 +1,6 @@
 .leaderboard {
-
+  max-height: 600px;
+  overflow-y: scroll;
 }
 
 .leaderboard-title {

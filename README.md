@@ -2,7 +2,7 @@
 
 1. Navigate to `http://sarink.net:4000`
 
-2. Play around with the `window.__gameLogs__` variable
+2. Play around with the `window.__games__` variable
 
 
 ## Setup
@@ -17,7 +17,7 @@
 
 5. Run `npm run start-dev` - this will start the [simplehttpserver](https://www.npmjs.com/package/simplehttpserver) at its default port (currently 8000).
 
-6. Load up `http://localhost:8000/client` in a browser. Now go forth and write some codes in `index.js`!
+6. Load up `http://localhost:8000/client/?devMode=prod|local` in a browser. Now go forth and write some codes in `index.js`!
 
 *NOTE: There are two `devMode` values you can pass as URL parameters*
 
@@ -28,15 +28,13 @@
 In addition, there are some URL parameters that will get passed to the server for initially filtering game logs, see the "Usage" section below.
 
 
-## Usage
+## Retrieving logs from the server
 
 #### Structure and architecture
 To see the structure, and all available game logs, just visit `/logs`.
 
 #### URL Parameters
 When you hit the `/logs` endpoint on `http://sarink.net:4000`, you can pass `numPlayers` and `playerNames` as query string parameters.
-If you pass these to `/client/index.html?...`, they'll directly pass-through to the server. Otherwise, if you don't pass either of these,
-the default will be `?numPlayers=3&playerNames=sarink,cherrypeel,nisse038`.
 
 `numPlayers` - this will only match game logs containing this number of players. example: `/logs?numPlayers=3`
 
@@ -49,7 +47,7 @@ of players in the game `cherrypeel,nisse038,sarink`.
 These are the only two filters you are available to pass to the server. Everything else is parsed client side.
 
 
-## Server-side stuff
+## How the server works
 
 #### Structure and architecture
 The database is in sqlite. You can view the structure of it in `server/db.js`

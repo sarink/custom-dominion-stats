@@ -104,28 +104,24 @@ window.App.GameAnalysis = (function() {
     return rawTurns.map(parseTurn);
   };
 
-  // Expects a game object with
-  const addAnalysis = game => {
-    return Object.assign(
-      {},
-      game,
-      {
-        // an 'analyzed' flag might be useful later if we want to delay analysis
-        // until a game is selected (or something).
-        analyzed: true,
-        playerList: getPlayers(game),
-        winners: getWinners(game),
-        scores: getScores(game),
-        supplyPiles: getSupplyPiles(game),
-        interestingSupplyPiles: excludeBoringPiles(getSupplyPiles(game)),
-        events: getEvents(game),
-        turnCount: getTurnCount(game),
-        playByPlay: getPlayByPlay(game)
-      }
-    );
+  const analyzeGame = game => {
+    if (game.analyzed) return game;
+    return {
+      analyzed: true,
+      id: game.id,
+      playerList: getPlayers(game),
+      winners: getWinners(game),
+      scores: getScores(game),
+      supplyPiles: getSupplyPiles(game),
+      interestingSupplyPiles: excludeBoringPiles(getSupplyPiles(game)),
+      events: getEvents(game),
+      turnCount: getTurnCount(game),
+      playByPlay: getPlayByPlay(game),
+      rawData: {...game},
+    };
   };
 
   return {
-    addAnalysis
+    analyzeGame,
   };
 })();
