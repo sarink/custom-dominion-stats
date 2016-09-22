@@ -13,11 +13,9 @@
 
 3. Run `npm install --only=dev` to install the dev dependencies. The other dependencies are for the server (please ensure your editor is configured to use [editorconfig](http://editorconfig.org) and [eslint](http://eslint.org)).
 
-4. Navigate to `/client`.
+4. Run `npm run start-dev` - this will start the [simplehttpserver](https://www.npmjs.com/package/simplehttpserver) at its default port (currently 8000).
 
-5. Run `npm run start-dev` - this will start the [simplehttpserver](https://www.npmjs.com/package/simplehttpserver) at its default port (currently 8000).
-
-6. Load up `http://localhost:8000/client/?devMode=prod|local` in a browser. Now go forth and write some codes in `index.js`!
+5. Load up `http://localhost:8000/client/?devMode=prod|local` in a browser. Now go forth and write some codes!
 
 *NOTE: There are two `devMode` values you can pass as URL parameters*
 
