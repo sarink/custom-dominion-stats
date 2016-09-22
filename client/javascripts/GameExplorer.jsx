@@ -11,6 +11,14 @@ window.App.GameExplorer = (function() {
       const mostPlayedAction = _.maxBy(Object.keys(groupedActionsByAction), action => groupedActionsByAction[action].length);
       const mostPlayedActionCount = (groupedActionsByAction[mostPlayedAction] || []).length;
 
+      const actionsByPlayer = _.groupBy(actionPlays, 'player');
+      const actionsByPlayerByAction = _.mapValues(actionsByPlayer, actionsForPlayer => _.groupBy(actionsForPlayer, 'action'));
+      const favoriteActionByPlayer = _.mapValues(actionsByPlayerByAction, actionsByAction => {
+        const favoriteAction = _.maxBy(Object.keys(actionsByAction), actionName => actionsByAction[actionName].length);
+        const favoriteActionCount = actionsByAction[favoriteAction].length;
+        return { action: favoriteAction, count: favoriteActionCount };
+      });
+
       return (
         <div className="gameDetails">
           <h2>Game {game.id}</h2>
@@ -36,6 +44,18 @@ window.App.GameExplorer = (function() {
             <div>Most played action</div>
             <div>
               {mostPlayedAction} ({mostPlayedActionCount} plays)
+            </div>
+          </section>
+          <section>
+            <div>Most played action by player</div>
+            <div>
+              <ul>
+                {
+                  _.map(favoriteActionByPlayer, (faveActionData, player) => (
+                    <li key={player}>{player}: {faveActionData.action} ({faveActionData.count} plays)</li>
+                  ))
+                }
+              </ul>
             </div>
           </section>
           <section>
