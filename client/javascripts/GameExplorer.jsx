@@ -105,8 +105,9 @@ window.App.GameExplorer = (function() {
     }
 
     render() {
-      const { games } = this.props;
-      const selectedGame = games[this.state.selectedGameId];
+      const games = this.props.games;
+
+      const selectedGame = this.state.selectedGameId ? _.find(this.props.games, { id: this.state.selectedGameId }) : null;
 
       return (
         <div>
@@ -116,7 +117,7 @@ window.App.GameExplorer = (function() {
             defaultValue=""
           >
             <option key="default" value="">Select a game</option>
-            { _.keys(games).map(id => <option key={id} value={id}>Game {id}</option>) }
+            { games.map(g => <option key={g.id} value={g.id}>Game {g.id}</option>) }
           </select>
 
           { selectedGame ? <GameDetails game={selectedGame} /> : null }
@@ -126,7 +127,9 @@ window.App.GameExplorer = (function() {
   }
 
   GameExplorer.propTypes = {
-    games: PropTypes.object.isRequired,
+    games: PropTypes.arrayOf(PropTypes.shape({
+
+    })).isRequired,
   };
 
   return GameExplorer;

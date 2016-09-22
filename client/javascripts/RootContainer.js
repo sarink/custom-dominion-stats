@@ -49,9 +49,12 @@ window.App.Root = (function() {
         const rawGamesArr = resp;
         const analyzedGames = {};
         rawGamesArr.forEach(game => analyzedGames[game.id] = GameAnalysis.analyzeGame(game));
+
         console.info('success! games have been analyzed and are available via: window.__games__');
         window.__games__ = analyzedGames;
-        this.setState({games: analyzedGames});
+
+        const analyzedGamesArr = _.values(analyzedGames);
+        this.setState({games: analyzedGamesArr});
       }).fail((resp) => {
         console.info('error loading!', resp);
       }).always(() => {

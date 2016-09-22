@@ -61,7 +61,7 @@ window.App.Leaderboard = (function() {
       const leaderboard = {};
       const newPlayerWithPlaces = { firsts: 0, seconds: 0, thirds: 0 };
 
-      _.each(games, (game) => {
+      games.forEach((game) => {
         const { first, second, third } = logParser.getPlaces(game.rawData.raw_log);
         if (first) {
           leaderboard[first] = leaderboard[first] || Object.assign({}, newPlayerWithPlaces);
@@ -100,7 +100,9 @@ window.App.Leaderboard = (function() {
   }
   Leaderboard.propTypes = {
     highlightPlayers: PropTypes.string,
-    games: PropTypes.object.isRequired,
+    games: PropTypes.arrayOf(PropTypes.shape({
+
+    })).isRequired,
   };
 
   return Leaderboard;

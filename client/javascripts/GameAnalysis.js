@@ -108,6 +108,7 @@ window.App.GameAnalysis = (function() {
     if (game.analyzed) return game;
     return {
       analyzed: true,
+      id: game.id,
       playerList: getPlayers(game),
       winners: getWinners(game),
       scores: getScores(game),
