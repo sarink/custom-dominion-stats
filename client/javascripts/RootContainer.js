@@ -16,8 +16,8 @@ window.App.Root = (function() {
   const DEV_MODE_PROD = 'prod';
   // For dev mode with production data (you can use different url parameters locally and they'll pass-through to the server):
   if (devMode === DEV_MODE_PROD) {
-    LOGS_URL = 'http://crossorigin.me/http://sarink.net:4000/logs';
-    LAST_UPDATED_STATS_URL = 'http://crossorigin.me/http://sarink.net:4000/last_updated_stats';
+    LOGS_URL = 'http://sarink.net:4000/logs';
+    LAST_UPDATED_STATS_URL = 'http://sarink.net:4000/last_updated_stats';
     console.info(`devMode enabled and set to: ${DEV_MODE_PROD} - setting LOGS_URL to ${LOGS_URL}`);
   }
   // For dev mode with local sample data (NOTE: url parameters will not be taken into account):
