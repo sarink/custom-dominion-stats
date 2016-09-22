@@ -1,0 +1,32 @@
+ul {
+	/* defaults are stupid */
+	margin: 0;
+	padding: 0;
+}
+
+.gameDetails {
+	width: 33%;
+}
+
+.gameDetails section {
+	padding-top: .1in;
+	padding-bottom: .1in;
+	border-bottom: 1px dashed #ddd;
+}
+
+.gameDetails section:last-of-type {
+	border-bottom: none;
+}
+
+.gameDetails section div {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.gameDetails section div:first-child {
+	width: 40%;
+}
+
+.gameDetails section div:last-child {
+	width: 60%;
+}

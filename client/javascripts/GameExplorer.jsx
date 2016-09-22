@@ -12,39 +12,46 @@ window.App.GameExplorer = (function() {
       const mostPlayedActionCount = (groupedActionsByAction[mostPlayedAction] || []).length;
 
       return (
-        <div>
+        <div className="gameDetails">
           <h2>Game {game.id}</h2>
-          <div>
-            <h3>Players</h3>
-            {game.playerList.join(', ')}
-          </div>
-          <div>
-            <h3>Winner(s)</h3>
-            {game.winners.join(', ')}
-          </div>
-          <div>
-            <h3>Scores</h3>
-            <ul>
-              {
-                _.map(game.scores, (score, player) => <li key={player}>{player}: {score}</li>)
-              }
-            </ul>
-          </div>
-          <div>
-            <h3>Most played action</h3>
-            {mostPlayedAction} ({mostPlayedActionCount} plays)
-          </div>
-          <h3>Turn count: {game.turnCount}</h3>
-          <div>
-            <h3>Piles</h3>
-            { game.interestingSupplyPiles.join(', ') }
-          </div>
+          <section>
+            <div>Players</div>
+            <div>{game.playerList.join(', ')}</div>
+          </section>
+          <section>
+            <div>Winner(s)</div>
+            <div>{game.winners.join(', ')}</div>
+          </section>
+          <section>
+            <div>Scores</div>
+            <div>
+              <ul>
+                {
+                  _.map(game.scores, (score, player) => <li key={player}>{player}: {score}</li>)
+                }
+              </ul>
+            </div>
+          </section>
+          <section>
+            <div>Most played action</div>
+            <div>
+              {mostPlayedAction} ({mostPlayedActionCount} plays)
+            </div>
+          </section>
+          <section>
+            <div>Turn count</div>
+            <div>{game.turnCount}</div>
+          </section>
+          <section>
+            <div>Piles</div>
+            <div>{ game.interestingSupplyPiles.join(', ') }</div>
+          </section>
           {
             game.events.length > 0 ? (
-              <div>
-                <h3>Events</h3>
-                {game.events.join(', ')}
-              </div>
+              <section>
+                <div>Events</div>
+                <div>{game.events.join(', ')}</div>
+              </section>
             ) : null
           }
         </div>
