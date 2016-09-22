@@ -1,9 +1,6 @@
-window.App.Root = (function() {
+window.App.RootContainer = (function() {
   const { React, $, _ } = window;
   const { PropTypes, Component } = React;
-
-  // TODO we can't require the components this way, I guess, bc faux modules
-  const { GameAnalysis } = window.App;
 
 
   const getURLParameter = (name) => {
@@ -34,10 +31,8 @@ window.App.Root = (function() {
     constructor() {
       super();
       this.state = {
-        numPlayers: null,
-        playerNames: null,
-        games: {},
         loading: true,
+        games: null,
         lastGitPull: null,
         lastDbUpdate: null,
       };
@@ -48,13 +43,10 @@ window.App.Root = (function() {
       $.get(LOGS_URL).done((resp) => {
         const rawGamesArr = resp;
         const analyzedGames = {};
-        rawGamesArr.forEach(game => analyzedGames[game.id] = GameAnalysis.analyzeGame(game));
-
+        rawGamesArr.forEach(game => analyzedGames[game.id] = window.App.GameAnalysis.analyzeGame(game));
         console.info('success! games have been analyzed and are available via: window.__games__');
         window.__games__ = analyzedGames;
-
-        const analyzedGamesArr = _.values(analyzedGames);
-        this.setState({games: analyzedGamesArr});
+        this.setState({games: analyzedGames});
       }).fail((resp) => {
         console.info('error loading!', resp);
       }).always(() => {
@@ -67,41 +59,21 @@ window.App.Root = (function() {
       });
     }
 
-    handlePlayerNamesChange = (event) => {
-      this.setState({playerNames: event.target.value});
-    }
-
     render() {
       const { loading, games, playerNames, lastGitPull, lastDbUpdate, lastDbLogUrl } = this.state;
 
-      let content = null;
+      if (loading) return <div>Loading...</div>;
 
-      const showGameExplorer = !_.isEmpty(games);
-      const showLeaderboard = !_.isEmpty(playerNames) && !_.isEmpty(games);
-      const showLastUpdatedStats = !_.isEmpty(lastGitPull) || !_.isEmpty(lastDbUpdate) || !_.isEmpty(lastDbLogUrl);
-      if (loading) {
-        content = 'Loading...';
-      } else if (!showGameExplorer && !showLeaderboard) {
-        content = 'Nothing to display :(';
-      } else {
-        content = [
-          showLeaderboard ? <window.App.Leaderboard key="leaderboard" highlightPlayers={playerNames} games={games} /> : null,
-          showGameExplorer ? <window.App.GameExplorer key="gameExplorer" games={games} /> : null,
-        ];
-      }
+      // Our components find it more convenient to deal with games as an array, so let's convert it for them
+      const gamesArr = _.values(games);
 
       return (
-        <div className="rootContainer">
-          <div className="rootContainer-content">
-            <div className="rootContainer-globalFilters">
-              Player names filter (player1,player2,etc): <input onChange={this.handlePlayerNamesChange} type="text" />
-            </div>
-            {content}
-          </div>
-          <div className="rootContainer-lastUpdatedStats">
-            {showLastUpdatedStats ? <window.App.LastUpdatedStats key="lastUpdatedStats" lastGitPull={lastGitPull} lastDbUpdate={lastDbUpdate} lastDbLogUrl={lastDbLogUrl}/> : null}
-          </div>
-        </div>
+        <window.App.Root
+          games={gamesArr}
+          lastGitPull={lastGitPull}
+          lastDbUpdate={lastDbUpdate}
+          lastDbLogUrl={lastDbLogUrl}
+        />
       );
     }
   }

@@ -1,11 +1,11 @@
-.rootContainer {
+.root {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
 
-.rootCotainer-lastUpdatedStats {
+.root-lastUpdatedStats {
 }
 
-.rootContainer-content {
+.root-content {
 }

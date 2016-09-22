@@ -1,5 +1,5 @@
 (function() {
   const ReactDOM = window.ReactDOM;
-  const { Root } = window.App;
-  ReactDOM.render(<Root />, document.getElementById('root'));
+  const { RootContainer } = window.App;
+  ReactDOM.render(<RootContainer />, document.getElementById('rootContainer'));
 }());
