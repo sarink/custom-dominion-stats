@@ -1,0 +1,22 @@
+.lastUpdatedStats {
+  opacity: 0.5;
+  width: 300px;
+  font-size: small;
+  transition: 0.2s all 0.5s
+}
+
+.lastUpdatedStats:hover {
+  opacity: 1.0;
+  width: 100%;
+  transition: 0.2s all 0s
+}
+
+.lastUpdatedStats:hover > * {
+  overflow: visible;
+}
+
+.lastUpdatedStats > * {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
