@@ -1,15 +1,17 @@
 {
+  "parser": "babel-eslint",
   "parserOptions": {
       "ecmaVersion": 7,
       "sourceType": "module",
       "ecmaFeatures": {
           "jsx": true,
+          "experimentalObjectRestSpread": true,
       }
   },
   "rules": {
     "semi": 2,
     "quotes": [1, "single", {"avoidEscape": true, "allowTemplateLiterals": true} ],
-    "comma-dangle": [2, "only-multiline"],
+    "comma-dangle": [2, "always-multiline"],
     "no-cond-assign": 1,
     "no-console": 0,
     "no-constant-condition": 1,
