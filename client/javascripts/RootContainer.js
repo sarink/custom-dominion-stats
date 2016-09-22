@@ -90,18 +90,19 @@ window.App.Root = (function() {
         content = 'Nothing to display :(';
       } else {
         content = [
-          showLeaderboard ? <window.App.Leaderboard highlightPlayers={playerNames} gameLogs={gameLogs} /> : null,
-          <br />,
-          <hr />,
-          showGameExplorer ? <window.App.GameExplorer gameLogs={gameLogs} /> : null,
+          showLeaderboard ? <window.App.Leaderboard key="leaderboard" highlightPlayers={playerNames} gameLogs={gameLogs} /> : null,
+          showGameExplorer ? <window.App.GameExplorer key="gameExplorer" gameLogs={gameLogs} /> : null,
         ];
       }
 
       return (
-        <div>
-          {showLastUpdatedStats ? <window.App.LastUpdatedStats lastGitPull={lastGitPull} lastDbUpdate={lastDbUpdate} lastDbLogUrl={lastDbLogUrl}/> : null}
-          <br />
-          {content}
+        <div className="rootContainer">
+          <div className="rootContainer-content">
+            {content}
+          </div>
+          <div className="rootContainer-lastUpdatedStats">
+            {showLastUpdatedStats ? <window.App.LastUpdatedStats key="lastUpdatedStats" lastGitPull={lastGitPull} lastDbUpdate={lastDbUpdate} lastDbLogUrl={lastDbLogUrl}/> : null}
+          </div>
         </div>
       );
     }
