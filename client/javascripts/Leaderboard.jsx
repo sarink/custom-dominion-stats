@@ -2,6 +2,7 @@ window.App.Leaderboard = (function() {
   const { React, _ } = window;
   const { PropTypes, Component } = React;
 
+  // TODO just use the game analysis class for this
   const logParser = (function() {
     const getPlaces = (log) => {
       let firstPlacePlayer, secondPlacePlayer, thirdPlacePlayer;

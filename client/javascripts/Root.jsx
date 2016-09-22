@@ -4,33 +4,41 @@ window.App.Root = (function() {
 
 
   class Root extends Component {
-    constructor() {
-      super();
-      this.state = {
-        playerNames: [],
-      };
+    componentWillMount() {
+      this.setState({
+        playerNames: ['sarink','nisse038','cherrypeel'],
+        filteredGames: this.props.allGames,
+      });
+    }
+
+    // TODO ok, obviously this is terrible
+    componentDidMount() {
+      this.handlePlayerNamesChange({target: {value: this.state.playerNames.join(',')}});
     }
 
     handlePlayerNamesChange = (event) => {
       const playerNames = event.target.value.split(',');
-      this.setState({playerNames: event.target.value});
+      const filteredGames = this.props.allGames.filter(game => {
+        return _.difference(game.playerList, playerNames).length === 0 && game.playerList.length === playerNames.length;
+      });
+      this.setState({playerNames, filteredGames});
     }
 
     render() {
-      const { games, lastGitPull, lastDbUpdate, lastDbLogUrl } = this.props;
-      const { playerNames } = this.state;
+      const { allGames, lastGitPull, lastDbUpdate, lastDbLogUrl } = this.props;
+      const { playerNames, filteredGames } = this.state;
 
       let content = null;
 
-      const showGameExplorer = !_.isEmpty(games);
-      const showLeaderboard = !_.isEmpty(playerNames) && !_.isEmpty(games);
+      const showGameExplorer = !_.isEmpty(filteredGames);
+      const showLeaderboard = !_.isEmpty(filteredGames);
       const showLastUpdatedStats = !_.isEmpty(lastGitPull) || !_.isEmpty(lastDbUpdate) || !_.isEmpty(lastDbLogUrl);
       if (!showGameExplorer && !showLeaderboard) {
         content = 'Nothing to display :(';
       } else {
         content = [
-          showLeaderboard ? <window.App.Leaderboard key="leaderboard" highlightPlayers={playerNames} games={games} /> : null,
-          showGameExplorer ? <window.App.GameExplorer key="gameExplorer" games={games} /> : null,
+          showLeaderboard ? <window.App.Leaderboard key="leaderboard" highlightPlayers={playerNames.join(',')} games={filteredGames} /> : null,
+          showGameExplorer ? <window.App.GameExplorer key="gameExplorer" games={filteredGames} /> : null,
         ];
       }
 
@@ -38,7 +46,7 @@ window.App.Root = (function() {
         <div className="root">
           <div className="root-content">
             <div className="root-globalFilters">
-              Player names filter (player1,player2,etc): <input onChange={this.handlePlayerNamesChange} type="text" />
+              Player names (AND, ex: player1,player2,etc): <input onChange={this.handlePlayerNamesChange} type="text" value={this.state.playerNames} />
             </div>
             {content}
           </div>

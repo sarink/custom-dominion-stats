@@ -69,7 +69,7 @@ window.App.RootContainer = (function() {
 
       return (
         <window.App.Root
-          games={gamesArr}
+          allGames={gamesArr}
           lastGitPull={lastGitPull}
           lastDbUpdate={lastDbUpdate}
           lastDbLogUrl={lastDbLogUrl}
