@@ -6,16 +6,36 @@ window.App.GameExplorer = (function() {
   /* global Chart */
   // That's for ChartJS: http://www.chartjs.org/
   class ActionGraph extends Component {
+    constructor() {
+      super();
+    }
+
+    componentWillReceiveProps() {
+      if (this.chartObject) {
+        console.log('destroying prior chart object');
+        this.chartObject.destroy();
+        this.chartObject = null;
+      }
+    }
+
     createChart(elt) {
+      if (!elt)
+        return;
+
       // creates a map from each value in an array to its index
       const invertArray = array => _.mapValues(_.invert(array), strIndex => parseInt(strIndex, 10));
+
+      // always map the same action name to the same hue
+      const getCharCodeSum = string => string.split('').reduce((acc, char) => (acc + char.charCodeAt(0)*char.charCodeAt(0)), 0);
+      const getHueHash = string => getCharCodeSum(string) % 360;
+      const getSatHash = string => ((getCharCodeSum(string) % 3) + 1) * 25;
 
       // We have to specify the radius of each bubble ourselves. We want it to represent how many times the action was played.
       // We'd rather not, say, double the radius if an action was played twice, and triple if it was played 3 times, because:
       // A) the circles would get HUMONGOUS really fast, like what if hoops plays 10 border villages or whatever?
       // B) the area of the circles would grow out of proportion with the action count. A circle with a radius of 2 has 4x the area of a circle with a radius of 1.
       // Solution: multiply the base radius by the square root of the action count, which will grow the area of the circle in proportion to the action count.
-      const baseRadius = 5;
+      const baseRadius = 9;
       const actionCountToRadius = count => baseRadius * Math.sqrt(count);
 
       const { data } = this.props;
@@ -24,7 +44,8 @@ window.App.GameExplorer = (function() {
       // Then assign an index to each. (well, that happens automatically, bc that's how arrays work).
       const actionNames = _.uniq(_.flatten(data.map(turn => Object.keys(turn.actionCounts))));
       // Sort by negative numbers to get descending sort - we want the actions with the most plays to have the lowest id, so it's lowest on the graph
-      const indexToActionName = _.sortBy(actionNames, actionName => _.reduce(data, (accCount, turn) => accCount + turn.actionCounts[actionName], 0) * (-1));
+      // This doesn't work right. Why?
+      const indexToActionName = _.sortBy(actionNames, actionName => (_.reduce(data, (accCount, turn) => (accCount + turn.actionCounts[actionName]), 0) * (-1)));
       const actionNameToIndex = invertArray(indexToActionName);
 
       // Do the same with turns as we did with actions - but this is a lot simpler, because we don't need to reorder them.
@@ -38,28 +59,58 @@ window.App.GameExplorer = (function() {
         r: actionCountToRadius(actionCount),
       }))));
 
-      console.log(chartData);
+      // One dataset per action cuz this library is just OK
+      const allDatasets = _.map(_.groupBy(chartData, 'y'), (actionData, actionIndex) => ({
+        label: indexToActionName[actionIndex],
+        data: actionData,
+        backgroundColor: `hsl(${getHueHash(indexToActionName[actionIndex])}, ${getSatHash(indexToActionName[actionIndex])}%, 50%)`,
+      }));
 
-      new Chart(elt, {
+      const chartObject = new Chart(elt, {
         type: 'bubble',
         data: {
-          labels: ['Dunno', 'Not Sure'],
-          datasets: [{
-            label: 'Action Graph Action Data',
-            data: chartData,
-          }],
-          xLabels: ['Dunno X'],
-          yLabels: ['Not Sure Y'],
+          datasets: allDatasets,
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                autoSkip: false,
+                callback: (value, index) => indexToActionName[value],
+                stepSize: 1,
+              },
+            }],
+            xAxes: [{
+              ticks: {
+                autoSkip: false,
+                callback: (value, index) => indexToTurnName[value],
+                stepSize: 1,
+              },
+            }],
+          },
+          legend: {
+            display: false,
+          },
         },
       });
+
+      // I'll fix this later, maybe
+      this.chartObject = chartObject;
     }
 
     render() {
+      if (this.canvasRef) {
+        this.createChart(this.canvasRef);
+      }
+
       return (
         <canvas
           width="600"
-          height="400"
-          ref={elt => this.createChart(elt)}
+          height="200"
+          ref={elt => {
+            this.canvasRef = elt;
+            this.createChart(elt);
+          }}
         />
       );
     }
@@ -122,10 +173,6 @@ window.App.GameExplorer = (function() {
         return { action: favoriteAction, count: favoriteActionCount };
       });
 
-      const selectedPlayer = 'nisse038';
-      const graphData = GameDetails.generateActionGraphData(game.playByPlay, selectedPlayer);
-      console.log(graphData);
-
       return (
         <div className="gameDetailsContainer">
           <div className="gameDetails">
@@ -184,8 +231,17 @@ window.App.GameExplorer = (function() {
             }
           </div>
           <div className="actionGraph">
-            <h2>ACTION Graph</h2>
-            <ActionGraph data={graphData}/>
+            <h2>ACTION Graphs</h2>
+            {
+              _.map(game.playerList, player => (
+                <div key={`${player}-${game.id}`}>
+                  <h3>For {player}:</h3>
+                  <ActionGraph
+                    data={GameDetails.generateActionGraphData(game.playByPlay, player)}
+                  />
+                </div>
+              ))
+            }
           </div>
         </div>
       );
