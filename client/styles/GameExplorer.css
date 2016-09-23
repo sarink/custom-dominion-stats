@@ -1,6 +1,14 @@
+.gameExplorerHeader > h1, .gameExplorerHeader> select {
+		display:inline-block;
+		margin-right: 0.25in;
+		vertical-align: middle;
+}
+
 .gameDetails {
+	display: inline-block;
 	min-width: 400px;
 	width: 33%;
+	vertical-align: top;
 }
 
 .gameDetails section {
@@ -25,4 +33,11 @@
 
 .gameDetails section div:last-child {
 	width: 60%;
+}
+
+
+.actionGraph {
+	display: inline-block;
+	width: 66%;
+	vertical-align: top;
 }
