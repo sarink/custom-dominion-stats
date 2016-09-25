@@ -4,8 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start-dev": "simplehttpserver",
-    "start-prod": ". $HOME/.nvm/nvm.sh && nvm use && mkdirp server/logs && mkdirp server/db && npm run forever-stopall && forever start -o server/logs/forever-`date '+%Y%m%d%H%M%S'`.log server/server.js ",
+    "start-dev": "webpack-dev-server --host 0.0.0.0 --port 4000 --content-base client/",
+    "start-prod": ". $HOME/.nvm/nvm.sh && nvm use && mkdirp server/logs && mkdirp server/db && npm run forever-stopall && webpack && forever start -o server/logs/forever-`date '+%Y%m%d%H%M%S'`.log server/server.js ",
     "forever-stopall": ". $HOME/.nvm/nvm.sh && nvm use && forever stopall",
     "deploy-prod": ". $HOME/.nvm/nvm.sh && nvm use && npm run stop-prod & sudo git pull && npm install && npm run start-prod",
     "forever-list": ". $HOME/.nvm/nvm.sh && nvm use && forever list"
