@@ -26,6 +26,6 @@ module.exports = {
 
   resolve: {
     root: path.resolve(__dirname, 'client/'),
-    extensions: ['.js', '.jsx'],
+    extensions: ['', '.js', '.jsx'],
   },
 };
