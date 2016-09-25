@@ -3,4 +3,4 @@ import ReactDOM from 'react-dom';
 
 import RootContainer from 'javascripts/RootContainer';
 
-ReactDOM.render(<div />, document.getElementById('rootContainer'));
+ReactDOM.render(<RootContainer />, document.getElementById('rootContainer'));

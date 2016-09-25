@@ -45,7 +45,7 @@ export default class RootContainer extends Component {
     $.get(LOGS_URL).done((resp) => {
       const rawGamesArr = resp;
       const analyzedGames = {};
-      rawGamesArr.forEach(game => analyzedGames[game.id] = window.App.GameAnalysis.analyzeGame(game));
+      rawGamesArr.forEach(game => analyzedGames[game.id] = analyzeGame(game));
       console.info('success! games have been analyzed and are available via: window.__games__');
       window.__games__ = analyzedGames;
       this.setState({games: analyzedGames});
