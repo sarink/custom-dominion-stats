@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-// const { RootContainer } = window.App;
+import RootContainer from 'javascripts/RootContainer';
+
 ReactDOM.render(<div />, document.getElementById('rootContainer'));

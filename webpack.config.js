@@ -18,7 +18,9 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'babel',
         query: {
-          presets: ['es2015'],
+          // Maybe we'll want fancier ES in the future
+          // We could change this to stage-0 or stage-1 if we want more js-sizzle
+          presets: ['es2015', 'stage-0'],
         },
       },
     ],
