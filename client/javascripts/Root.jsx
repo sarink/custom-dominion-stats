@@ -2,6 +2,10 @@ import React, { PropTypes, Component } from 'react';
 import $ from 'jquery';
 import _ from 'lodash';
 
+import Leaderboard from 'javascripts/Leaderboard';
+import GameExplorer from 'javascripts/GameExplorer';
+import LastUpdatedStats from 'javascripts/LastUpdatedStats';
+
 export default class Root extends Component {
   componentWillMount() {
     this.setState({
@@ -40,8 +44,8 @@ export default class Root extends Component {
       content = 'Nothing to display :(';
     } else {
       content = [
-        showLeaderboard ? <window.App.Leaderboard key="leaderboard" highlightPlayers={playerNames ? playerNames.join(',') : ''} games={filteredGames} /> : null,
-        showGameExplorer ? <window.App.GameExplorer key="gameExplorer" games={filteredGames} /> : null,
+        showLeaderboard ? <Leaderboard key="leaderboard" highlightPlayers={playerNames ? playerNames.join(',') : ''} games={filteredGames} /> : null,
+        showGameExplorer ? <GameExplorer key="gameExplorer" games={filteredGames} /> : null,
       ];
     }
 
@@ -54,7 +58,7 @@ export default class Root extends Component {
           {content}
         </div>
         <div className="root-lastUpdatedStats">
-          {showLastUpdatedStats ? <window.App.LastUpdatedStats key="lastUpdatedStats" lastGitPull={lastGitPull} lastDbUpdate={lastDbUpdate} lastDbLogUrl={lastDbLogUrl}/> : null}
+          {showLastUpdatedStats ? <LastUpdatedStats key="lastUpdatedStats" lastGitPull={lastGitPull} lastDbUpdate={lastDbUpdate} lastDbLogUrl={lastDbLogUrl}/> : null}
         </div>
       </div>
     );

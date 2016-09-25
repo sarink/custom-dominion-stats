@@ -3,6 +3,7 @@ import _ from 'lodash';
 import $ from 'jquery';
 
 import Root from 'javascripts/Root';
+import { analyzeGame } from 'javascripts/GameAnalysis';
 
 const getURLParameter = (name) => {
   return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
