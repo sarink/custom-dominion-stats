@@ -1,29 +1,35 @@
 import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 
+import Avatar from 'javascripts/Avatar';
+
 // Any games with less than this number of turns won't be counted when computing the leaderboard
 const MIN_NUM_TURNS_THRESHOLD = 4;
 
+
 class PlayerWithPlaces extends Component {
+  static propTypes = {
+    playerName: PropTypes.string.isRequired,
+    firsts: PropTypes.number.isRequired,
+    seconds: PropTypes.number.isRequired,
+    thirds: PropTypes.number.isRequired,
+  }
+
   render() {
-    const { highlightPlayer, playerName, firsts, seconds, thirds }  = this.props;
+    const { playerName, firsts, seconds, thirds }  = this.props;
+
     return (
-      <div className={`leaderboard-playerWithPlaces${-highlightPlayer ? 'highlightPlayer' : ''}`}>
-        <h3>{playerName}</h3>
-        Firsts: {firsts}<br/>
-        Seconds: {seconds}<br/>
-        Thirds: {thirds}
+      <div className="leaderboard-playerWithPlaces">
+        <Avatar playerName={playerName} />
+        <div className="leaderboard-playerWithPlaces-stats">
+          Firsts: {firsts}<br/>
+          Seconds: {seconds}<br/>
+          Thirds: {thirds}
+        </div>
       </div>
     );
   }
 }
-PlayerWithPlaces.propTypes = {
-  playerName: PropTypes.string.isRequired,
-  firsts: PropTypes.number.isRequired,
-  seconds: PropTypes.number.isRequired,
-  thirds: PropTypes.number.isRequired,
-  highlightPlayer: PropTypes.bool,
-};
 
 
 export default class Leaderboard extends Component {
@@ -97,7 +103,6 @@ export default class Leaderboard extends Component {
               firsts={leaderboard[playerName].firsts}
               seconds={leaderboard[playerName].seconds}
               thirds={leaderboard[playerName].thirds}
-              highlightPlayer
             />
           );
         })}
@@ -105,5 +110,3 @@ export default class Leaderboard extends Component {
     );
   }
 }
-Leaderboard.propTypes = {
-};

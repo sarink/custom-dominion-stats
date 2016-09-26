@@ -1,6 +1,4 @@
 .leaderboard {
-  max-height: 600px;
-  overflow-y: scroll;
 }
 
 .leaderboard-title {
@@ -8,10 +6,13 @@
 }
 
 .leaderboard-playerWithPlaces {
-  color: lightgrey;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 30px;
 }
 
-.leaderboard-playerWithPlaces-highlightPlayer,
-.leaderboard-playerWithPlaces:hover {
-  color: grey;
+.leaderboard-playerWithPlaces-stats {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }
