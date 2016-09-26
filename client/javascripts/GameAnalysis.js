@@ -5,7 +5,7 @@ import _ from 'lodash';
 // Return all the matches.
 // Be sure to pass the 'g' flag to the supplied regex.
 const regexExecAll = (regex, targetString) => {
-  let results = [];
+  const results = [];
   let regexResult;
   while (regexResult = regex.exec(targetString)) { // eslint-disable-line no-cond-assign
     results.push(regexResult);

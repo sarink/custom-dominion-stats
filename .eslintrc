@@ -34,6 +34,7 @@
     "no-regex-spaces": 1,
     "no-sparse-arrays": 1,
     "no-unreachable": 1,
+    "prefer-const": 2,
     "use-isnan": 1,
     "valid-typeof": 1,
     "no-fallthrough": 1,
