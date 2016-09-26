@@ -1,9 +1,7 @@
 import React, { PropTypes, Component } from 'react';
+import Chart from 'chart.js';
 import _ from 'lodash';
 
-// The line after this is an eslint directive
-/* global Chart */
-// That's for ChartJS: http://www.chartjs.org/
 class ActionGraph extends Component {
   constructor() {
     super();
