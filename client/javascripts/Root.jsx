@@ -32,12 +32,8 @@ export default class Root extends Component {
 
     return (
       <div className="root">
-        <div className="root-content">
-          {content}
-        </div>
-        <div className="root-lastUpdatedStats">
-          {showLastUpdatedStats ? <LastUpdatedStats key="lastUpdatedStats" lastGitPull={lastGitPull} lastDbUpdate={lastDbUpdate} lastDbLogUrl={lastDbLogUrl}/> : null}
-        </div>
+        {showLastUpdatedStats ? <LastUpdatedStats key="lastUpdatedStats" lastGitPull={lastGitPull} lastDbUpdate={lastDbUpdate} lastDbLogUrl={lastDbLogUrl}/> : null}
+        {content}
       </div>
     );
   }

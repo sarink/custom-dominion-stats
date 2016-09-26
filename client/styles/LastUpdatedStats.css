@@ -1,4 +1,7 @@
 .lastUpdatedStats {
+  position: absolute;
+  top: 10px;
+  left: 10px;
   opacity: 0.5;
   width: 300px;
   font-size: small;

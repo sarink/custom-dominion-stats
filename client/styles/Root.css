@@ -1,11 +1,7 @@
 .root {
+  margin-top: 20px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-}
-
-.root-lastUpdatedStats {
-}
-
-.root-content {
+  flex-wrap: wrap;
 }
