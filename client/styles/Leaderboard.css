@@ -16,3 +16,8 @@
   flex-direction: column;
   justify-content: space-around;
 }
+
+.leaderboard-playerWithPlaces-index {
+  font-size: x-large;
+  margin-right: 5px;
+}

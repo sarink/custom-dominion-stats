@@ -16,10 +16,11 @@ class PlayerWithPlaces extends Component {
   }
 
   render() {
-    const { playerName, firsts, seconds, thirds }  = this.props;
+    const { index, playerName, firsts, seconds, thirds }  = this.props;
 
     return (
       <div className="leaderboard-playerWithPlaces">
+        <span className="leaderboard-playerWithPlaces-index">{index}.</span>
         <Avatar playerName={playerName} />
         <div className="leaderboard-playerWithPlaces-stats">
           Firsts: {firsts}<br/>
@@ -95,9 +96,10 @@ export default class Leaderboard extends Component {
     return (
       <div className="leaderboard">
         <h1 className="leaderboard-title">Leaderboard</h1>
-        {playersSortedByScore.map((playerName) => {
+        {playersSortedByScore.map((playerName, index) => {
           return (
             <PlayerWithPlaces
+              index={index+1}
               key={playerName}
               playerName={playerName}
               firsts={leaderboard[playerName].firsts}
