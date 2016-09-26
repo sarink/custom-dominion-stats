@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "nvm-use": "[[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh && nvm use",
+    "nvm-use": ". $HOME/.nvm/nvm.sh && nvm use",
     "start-dev": "webpack-dev-server --host 0.0.0.0 --port 4000 --content-base client/",
     "start-prod": "npm run nvm-use && mkdirp server/logs && mkdirp server/db && npm run forever-stopall && npm install && webpack -p && forever start -o server/logs/forever-`date '+%Y%m%d%H%M%S'`.log server/server.js ",
     "forever-stopall": "npm run nvm-use && forever stopall",
