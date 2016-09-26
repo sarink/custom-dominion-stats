@@ -19,11 +19,24 @@ const GAME_OVER_MARKER = '------------ Game Over ------------';
 // Returns the names of the player in an array
 const getPlayers = game => game.players.split(',');
 
-// Returns the names of the winner or winners in an array
-const getWinners = game => {
-  var firstPlace = /1st place: (\w+)\n/g;
-  return regexExecAll(firstPlace, game.raw_log).map(match => match[1]);
+// Returns a sorted `places` array (index 0 is the winners). Each item is an array because players can tie for a place.
+const getPlaces = game => {
+  const log = game.raw_log;
+
+  const placeSearchStrings = ['1st place:', '2nd place:', '3rd place:', '4th place:'];
+  const placeSearchStringsForThisGame = _.take(placeSearchStrings, getPlayers(game).length);
+
+  const places = placeSearchStringsForThisGame.map((placeSearchString, i) => {
+    const placeRegex = new RegExp(`${placeSearchString} (\\w+)\\n`, 'g');
+    const players = regexExecAll(placeRegex, log).map(match => match[1]);
+    return players;
+  });
+
+  return places;
 };
+
+// Returns the names of the winner or winners in an array
+const getWinners = game => getPlaces(game)[0];
 
 // Returns an array of the names of the events in the game - empty if none
 const getEvents = game => {
@@ -110,6 +123,7 @@ export const analyzeGame = game => {
     id: game.id,
     playerList: getPlayers(game),
     winners: getWinners(game),
+    places: getPlaces(game),
     scores: getScores(game),
     supplyPiles: getSupplyPiles(game),
     interestingSupplyPiles: excludeBoringPiles(getSupplyPiles(game)),
