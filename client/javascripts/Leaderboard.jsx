@@ -1,96 +1,110 @@
 import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 
-// TODO just use the game analysis class for this
-const logParser = (function() {
-  const getPlaces = (log) => {
-    let firstPlacePlayer, secondPlacePlayer, thirdPlacePlayer;
-    const placeLines = _.compact(log.split('\n').map((line) => line.indexOf('place:') !== -1 ? line : null));
-    placeLines.forEach((line) => {
-      const playerName = line.substr(line.indexOf(': ') + 2);
-      if (line.indexOf('1st place:') === 0) {
-        firstPlacePlayer = playerName;
-      } else if (line.indexOf('2nd place:') === 0) {
-        secondPlacePlayer = playerName;
-      } else if (line.indexOf('3rd place:') === 0) {
-        thirdPlacePlayer = playerName;
-      }
-    });
+import Avatar from 'javascripts/Avatar';
 
-    return {
-      first: firstPlacePlayer,
-      second: secondPlacePlayer,
-      third: thirdPlacePlayer,
-    };
-  };
-
-  return {
-    getPlaces,
-  };
-}());
+// Any games with less than this number of turns won't be counted when computing the leaderboard
+const MIN_NUM_TURNS_THRESHOLD = 4;
 
 
 class PlayerWithPlaces extends Component {
+  static propTypes = {
+    playerName: PropTypes.string.isRequired,
+    firsts: PropTypes.number.isRequired,
+    seconds: PropTypes.number.isRequired,
+    thirds: PropTypes.number.isRequired,
+  }
+
   render() {
-    const { highlightPlayer, playerName, firsts, seconds, thirds }  = this.props;
+    const { index, playerName, firsts, seconds, thirds }  = this.props;
+
     return (
-      <div className={`leaderboard-playerWithPlaces${-highlightPlayer ? 'highlightPlayer' : ''}`}>
-        <h3>{playerName}</h3>
-        Firsts: {firsts}<br/>
-        Seconds: {seconds}<br/>
-        Thirds: {thirds}
+      <div className="leaderboard-playerWithPlaces">
+        <span className="leaderboard-playerWithPlaces-index">{index}.</span>
+        <Avatar playerName={playerName} />
+        <div className="leaderboard-playerWithPlaces-stats">
+          Firsts: {firsts}<br/>
+          Seconds: {seconds}<br/>
+          Thirds: {thirds}
+        </div>
       </div>
     );
   }
 }
-PlayerWithPlaces.propTypes = {
-  playerName: PropTypes.string.isRequired,
-  firsts: PropTypes.number.isRequired,
-  seconds: PropTypes.number.isRequired,
-  thirds: PropTypes.number.isRequired,
-  highlightPlayer: PropTypes.bool,
-};
 
 
 export default class Leaderboard extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      playerList: props.initialPlayerList,
+    };
+  }
+
+  static defaultProps = {
+    initialPlayerList: [],
+  }
+
+  static propTypes = {
+    initialPlayerList: PropTypes.arrayOf(PropTypes.string),
+    games: PropTypes.arrayOf(PropTypes.shape({
+      playerList: PropTypes.arrayOf(PropTypes.string).isRequired,
+      scores: PropTypes.object.isRequired,
+    })).isRequired,
+  }
+
   render() {
-    let { highlightPlayers, games } = this.props;
-    // TODO wtf is wrong with defaultProps?????
-    highlightPlayers = highlightPlayers || '';
+    const { games } = this.props;
+    const { playerList } = this.state;
 
-    const leaderboard = {};
-    const newPlayerWithPlaces = { firsts: 0, seconds: 0, thirds: 0 };
+    const placeIndexToPlaceName = {
+      0: 'firsts',
+      1: 'seconds',
+      2: 'thirds',
+      3: 'fourths',
+    };
 
-    games.forEach((game) => {
-      const { first, second, third } = logParser.getPlaces(game.rawData.raw_log);
-      if (first) {
-        leaderboard[first] = leaderboard[first] || Object.assign({}, newPlayerWithPlaces);
-        leaderboard[first].firsts++;
-      }
-      if (second) {
-        leaderboard[second] = leaderboard[second] || Object.assign({}, newPlayerWithPlaces);
-        leaderboard[second].seconds++;
-      }
-      if (third) {
-        leaderboard[third] = leaderboard[third] || Object.assign({}, newPlayerWithPlaces);
-        leaderboard[third].thirds++;
-      }
+    // Build an initial `leaderboard` object where the key is the player name and the value is a place count object
+    // ex: { playerName: { firsts: 0, seconds: 0, thirds: 0, ... } }
+    const leaderboard = _.fromPairs(playerList.map((player) => {
+      const val = _.fromPairs(playerList.map((player, placeIndex) => [placeIndexToPlaceName[placeIndex], 0] ));
+      return [player, val];
+    }));
+
+    // Filter out games that don't have our players in them or don't meet the minimum turn threshold
+    const filteredGames = games.filter(game =>
+      game.analyzed &&
+      game.turnCount > MIN_NUM_TURNS_THRESHOLD &&
+      game.playerList.length === playerList.length &&
+      _.difference(game.playerList, playerList).length === 0
+    );
+
+    // Populate the `leaderboard` object
+    filteredGames.forEach(game => {
+      game.places.forEach((players, placeIndex) => {
+        const placeName = placeIndexToPlaceName[placeIndex];
+        players.forEach(player => {
+          leaderboard[player][placeName]++;
+        });
+      });
     });
 
-    const sortedPlayers = _.reverse(_.sortBy(_.keys(leaderboard), (player) => leaderboard[player].firsts));
+    // Build an array of each playerName, sorted by the amount of 'firsts' they have in the `leaderboard`
+    const winningPlaceName = placeIndexToPlaceName[0];
+    const playersSortedByScore = _.reverse(_.sortBy(_.keys(leaderboard), player => leaderboard[player][winningPlaceName]));
 
     return (
       <div className="leaderboard">
         <h1 className="leaderboard-title">Leaderboard</h1>
-        {sortedPlayers.map((playerName) => {
+        {playersSortedByScore.map((playerName, index) => {
           return (
             <PlayerWithPlaces
+              index={index+1}
               key={playerName}
               playerName={playerName}
               firsts={leaderboard[playerName].firsts}
               seconds={leaderboard[playerName].seconds}
               thirds={leaderboard[playerName].thirds}
-              highlightPlayer={highlightPlayers.indexOf(playerName) !== -1}
             />
           );
         })}
@@ -98,10 +112,3 @@ export default class Leaderboard extends Component {
     );
   }
 }
-
-Leaderboard.propTypes = {
-  highlightPlayers: PropTypes.string,
-  games: PropTypes.arrayOf(PropTypes.shape({
-
-  })).isRequired,
-};

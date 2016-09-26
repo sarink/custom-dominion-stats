@@ -1,3 +1,8 @@
+.gameExplorer {
+	max-width: 66%;
+	min-width: 400px;
+}
+
 .gameExplorerHeader > h1, .gameExplorerHeader> select {
 		display:inline-block;
 		margin-right: 0.25in;

@@ -1,17 +1,27 @@
 .leaderboard {
-  max-height: 600px;
-  overflow-y: scroll;
+  max-width: 33%;
+  min-width: 200px;
 }
 
 .leaderboard-title {
-  margin-top: 0;
 }
 
 .leaderboard-playerWithPlaces {
-  color: lightgrey;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 30px;
 }
 
-.leaderboard-playerWithPlaces-highlightPlayer,
-.leaderboard-playerWithPlaces:hover {
-  color: grey;
+.leaderboard-playerWithPlaces-stats {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin-left: 15px;
+  line-height: 25px;
+  font-size: medium;
+}
+
+.leaderboard-playerWithPlaces-index {
+  font-size: x-large;
+  margin-right: 5px;
 }
