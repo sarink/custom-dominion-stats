@@ -1,8 +1,9 @@
 .leaderboard {
+  max-width: 33%;
+  min-width: 200px;
 }
 
 .leaderboard-title {
-  margin-top: 0;
 }
 
 .leaderboard-playerWithPlaces {
@@ -15,6 +16,9 @@
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  margin-left: 15px;
+  line-height: 25px;
+  font-size: medium;
 }
 
 .leaderboard-playerWithPlaces-index {
