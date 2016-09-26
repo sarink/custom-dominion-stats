@@ -7,15 +7,15 @@
 
 ## Setup
 
+*It is recommended to be running [nvm](http://nvm.sh), this project has a `.nvmrc` file at the root*
+
 1. Clone this repo, navigate to the root.
 
-2. Run `nvm use`
+2. Run `npm install` - please ensure your editor is configured to use [editorconfig](http://editorconfig.org) and [eslint](http://eslint.org).
 
-3. Run `npm install --only=dev` to install the dev dependencies. The other dependencies are for the server (please ensure your editor is configured to use [editorconfig](http://editorconfig.org) and [eslint](http://eslint.org)).
+3. Run `npm run start-dev` - this will start the webpack-dev-server on port 4000.
 
-4. Run `npm run start-dev` - this will start the [simplehttpserver](https://www.npmjs.com/package/simplehttpserver) at its default port (currently 8000).
-
-5. Load up `http://localhost:8000/client/?devMode=prod|local` in a browser. Now go forth and write some codes!
+4. Load up `http://localhost:4000/?devMode=prod|local` in a browser. Now go forth and write some codes!
 
 *NOTE: There are two `devMode` values you can pass as URL parameters*
 

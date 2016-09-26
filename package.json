@@ -4,11 +4,11 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start-dev": "simplehttpserver",
-    "start-prod": ". $HOME/.nvm/nvm.sh && nvm use && mkdirp server/logs && mkdirp server/db && npm run forever-stopall && forever start -o server/logs/forever-`date '+%Y%m%d%H%M%S'`.log server/server.js ",
-    "forever-stopall": ". $HOME/.nvm/nvm.sh && nvm use && forever stopall",
-    "deploy-prod": ". $HOME/.nvm/nvm.sh && nvm use && npm run stop-prod & sudo git pull && npm install && npm run start-prod",
-    "forever-list": ". $HOME/.nvm/nvm.sh && nvm use && forever list"
+    "nvm-use": "[[ -s $HOME/.nvm/nvm.sh ]] && . $HOME/.nvm/nvm.sh && nvm use",
+    "start-dev": "webpack-dev-server --host 0.0.0.0 --port 4000 --content-base client/",
+    "start-prod": "npm run nvm-use && mkdirp server/logs && mkdirp server/db && npm run forever-stopall && npm install && webpack -p && forever start -o server/logs/forever-`date '+%Y%m%d%H%M%S'`.log server/server.js ",
+    "forever-stopall": "npm run nvm-use && forever stopall",
+    "forever-list": "npm run nvm-use && forever list"
   },
   "keywords": [],
   "author": "",
@@ -16,18 +16,28 @@
   "dependencies": {
     "bluebird": "^3.4.6",
     "body-parser": "^1.15.2",
+    "chart.js": "^2.3.0",
     "cheerio": "^0.22.0",
     "express": "^4.14.0",
     "forever": "^0.15.2",
+    "jquery": "^3.1.1",
     "left-pad": "^1.1.1",
-    "lodash": "^4.15.0",
+    "lodash": "^4.16.1",
     "promise": "^7.1.1",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
     "request": "^2.74.0",
-    "sqlite3": "^3.1.4"
+    "sqlite3": "^3.1.4",
+    "webpack": "^1.13.2"
   },
   "devDependencies": {
+    "babel-core": "^6.14.0",
     "babel-eslint": "^6.1.2",
+    "babel-loader": "^6.2.5",
+    "babel-plugin-transform-react-jsx": "^6.8.0",
+    "babel-preset-es2015": "^6.14.0",
+    "babel-preset-stage-0": "^6.5.0",
     "eslint": "^3.5.0",
-    "simplehttpserver": "0.0.6"
+    "webpack-dev-server": "^1.16.1"
   }
 }
