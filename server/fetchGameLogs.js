@@ -21,7 +21,9 @@
     if (_.isEmpty(logBody)) return false;
     return logBody.indexOf('sarink') !== -1 ||
            logBody.indexOf('nisse038') !== -1 ||
-           logBody.indexOf('cherrypeel') !== -1;
+           logBody.indexOf('cherrypeel') !== -1 ||
+           logBody.indexOf('lyra6969') !== -1 ||
+           logBody.indexOf('gergesim') !== -1;
   };
 
   var parsePlayerNamesFromLog = function(logBody) {
