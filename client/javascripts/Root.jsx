@@ -7,8 +7,14 @@ import GameExplorer from 'javascripts/GameExplorer';
 import LastUpdatedStats from 'javascripts/LastUpdatedStats';
 
 export default class Root extends Component {
+  static propTypes = {
+    allGames: PropTypes.arrayOf(PropTypes.object).isRequired,
+  }
+
   render() {
     const { allGames, lastGitPull, lastDbUpdate, lastDbLogUrl } = this.props;
+
+    const initialLeaderboardPlayers = ['sarink', 'cherrypeel', 'nisse038'];
 
     let content = null;
 
@@ -19,7 +25,7 @@ export default class Root extends Component {
       content = 'Nothing to display :(';
     } else {
       content = [
-        showLeaderboard ? <Leaderboard key="leaderboard" games={allGames} /> : null,
+        showLeaderboard ? <Leaderboard key="leaderboard" games={allGames} initialPlayerList={initialLeaderboardPlayers} /> : null,
         showGameExplorer ? <GameExplorer key="gameExplorer" games={allGames} /> : null,
       ];
     }
