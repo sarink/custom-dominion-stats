@@ -315,12 +315,12 @@ export default class GameExplorer extends Component {
 
     const selectedGame = selectedGameId ? _.find(filteredGames, { id: selectedGameId }) : null;
 
-    const computeFilterList = (gameKey) => _.uniq(_.flatten(games.map(game => game[gameKey]) )).sort();
+    const computeFilterList = (gameKey) => _.uniq(_.flatten(filteredGames.map(game => game[gameKey]) )).sort();
     const allPlayers = computeFilterList('playerList');
     const allWinners = computeFilterList('winners');
-    const allSupplyPiles = computeFilterList('supplyPiles');
-    const allNumPlayers = _.range(1, _.max(_.flatten(games.map(game => game.playerList.length) )) + 1);
-    // const allTurnCounts = _.range(1, _.max(_.flatten(games.map(game => game.turnCount) )));
+    const allSupplyPiles = computeFilterList('interestingSupplyPiles');
+    const allNumPlayers = _.range(1, _.max(_.flatten(filteredGames.map(game => game.playerList.length) )) + 1);
+    // const allTurnCounts = _.range(1, _.max(_.flatten(filteredGames.map(game => game.turnCount) )));
 
     const buildFilterElement = (placeholder, filterKey, list, options) => {
       return (
