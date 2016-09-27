@@ -278,10 +278,23 @@ export default class GameExplorer extends Component {
   }
 
   handleFilterChange = (list, filterKey) => {
+    let filterValue = null;
+
+    // Multi-select filters come as an array of {label, value} objects
+    if (_.isArray(list)) {
+      filterValue = list.map(item => item.value);
+      if (_.isEmpty(filterValue)) filterValue = null;
+    }
+    // Single-select filters will be just one {label, value} object
+    else {
+      filterValue = list && list.value ? list.value : null;
+    }
+
     const filters = {
       ...this.state.filters,
-      [filterKey]: list.map(item => item.value),
+      [filterKey]: filterValue,
     };
+
     this.setState({ filters });
   }
 
