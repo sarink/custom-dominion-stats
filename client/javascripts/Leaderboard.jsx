@@ -14,10 +14,11 @@ class PlayerWithPlaces extends Component {
     firsts: PropTypes.number.isRequired,
     seconds: PropTypes.number.isRequired,
     thirds: PropTypes.number,
+    fourths: PropTypes.number,
   }
 
   render() {
-    const { index, playerName, firsts, seconds, thirds }  = this.props;
+    const { index, playerName, firsts, seconds, thirds, fourths }  = this.props;
 
     return (
       <div className="leaderboard-playerWithPlaces">
@@ -27,6 +28,7 @@ class PlayerWithPlaces extends Component {
           Firsts: {firsts}<br/>
           Seconds: {seconds}<br/>
           {thirds != null ? `Thirds: ${thirds}` : null}
+          {fourths != null ? `Fourths: ${fourths}` : null}
         </div>
       </div>
     );
@@ -130,6 +132,7 @@ export default class Leaderboard extends Component {
                 firsts={leaderboard[playerName].firsts}
                 seconds={leaderboard[playerName].seconds}
                 thirds={leaderboard[playerName].thirds}
+                fourths={leaderboard[playerName].fourths}
               />
             );
           })
