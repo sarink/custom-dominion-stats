@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 
+import Select from 'react-select';
 import Avatar from 'javascripts/Avatar';
 
 // Any games with less than this number of turns won't be counted when computing the leaderboard
@@ -12,11 +13,12 @@ class PlayerWithPlaces extends Component {
     playerName: PropTypes.string.isRequired,
     firsts: PropTypes.number.isRequired,
     seconds: PropTypes.number.isRequired,
-    thirds: PropTypes.number.isRequired,
+    thirds: PropTypes.number,
+    fourths: PropTypes.number,
   }
 
   render() {
-    const { index, playerName, firsts, seconds, thirds }  = this.props;
+    const { index, playerName, firsts, seconds, thirds, fourths }  = this.props;
 
     return (
       <div className="leaderboard-playerWithPlaces">
@@ -25,7 +27,8 @@ class PlayerWithPlaces extends Component {
         <div className="leaderboard-playerWithPlaces-stats">
           Firsts: {firsts}<br/>
           Seconds: {seconds}<br/>
-          Thirds: {thirds}
+          {thirds != null ? `Thirds: ${thirds}` : null}
+          {fourths != null ? `Fourths: ${fourths}` : null}
         </div>
       </div>
     );
@@ -53,8 +56,16 @@ export default class Leaderboard extends Component {
     })).isRequired,
   }
 
+  handlePlayerListFilterChange = (selectedPlayerList) => {
+    this.setState({ playerList: selectedPlayerList.map(player => player.value) });
+  }
+
+  convertPlayerListToSelectOptions = (playerList) => {
+    return playerList.map(player => ({label: player, value: player}) );
+  }
+
   render() {
-    const { games } = this.props;
+    const { games, initialPlayerList } = this.props;
     const { playerList } = this.state;
 
     const placeIndexToPlaceName = {
@@ -93,21 +104,40 @@ export default class Leaderboard extends Component {
     const winningPlaceName = placeIndexToPlaceName[0];
     const playersSortedByScore = _.reverse(_.sortBy(_.keys(leaderboard), player => leaderboard[player][winningPlaceName]));
 
+    // Get a list of all players from our games, then build options for reaect-select like: [{label: 'player', value: 'player'}]
+    const allPlayers = _.uniq(_.flatten(games.map(game => game.playerList)));
+    const playerListOptions = this.convertPlayerListToSelectOptions(allPlayers);
+
     return (
       <div className="leaderboard">
         <h1 className="leaderboard-title">Leaderboard</h1>
-        {playersSortedByScore.map((playerName, index) => {
-          return (
-            <PlayerWithPlaces
-              index={index+1}
-              key={playerName}
-              playerName={playerName}
-              firsts={leaderboard[playerName].firsts}
-              seconds={leaderboard[playerName].seconds}
-              thirds={leaderboard[playerName].thirds}
-            />
-          );
-        })}
+        <div className="leaderboard-filters">
+          <Select
+            value={playerList}
+            resetValue={this.convertPlayerListToSelectOptions(initialPlayerList)}
+            options={playerListOptions}
+            onChange={this.handlePlayerListFilterChange}
+            multi
+            autoBlur
+          />
+          <br/>
+        </div>
+        {!_.isEmpty(filteredGames)
+          ? playersSortedByScore.map((playerName, index) => {
+            return (
+              <PlayerWithPlaces
+                index={index+1}
+                key={playerName}
+                playerName={playerName}
+                firsts={leaderboard[playerName].firsts}
+                seconds={leaderboard[playerName].seconds}
+                thirds={leaderboard[playerName].thirds}
+                fourths={leaderboard[playerName].fourths}
+              />
+            );
+          })
+          : 'No matching games found :('
+        }
       </div>
     );
   }
