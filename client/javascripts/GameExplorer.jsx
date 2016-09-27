@@ -277,10 +277,6 @@ export default class GameExplorer extends Component {
     this.setState({ selectedGameId: value ? parseInt(value, 10) : null });
   }
 
-  convertListToSelectOptions = (list) => {
-    return list.map(item => ({label: item, value: item}) );
-  }
-
   handleFilterChange = (list, filterKey) => {
     const filters = {
       ...this.state.filters,
@@ -301,8 +297,6 @@ export default class GameExplorer extends Component {
         (filters.supplyPiles ? _.intersection(game.supplyPiles, filters.supplyPiles).length === 0 : true)
       );
     });
-    console.debug('filteredGames', filteredGames);
-    console.debug('filters', filters);
 
     const selectedGame = this.state.selectedGameId ? _.find(filteredGames, { id: this.state.selectedGameId }) : null;
 
@@ -311,15 +305,29 @@ export default class GameExplorer extends Component {
     const allSupplyPiles = _.uniq(_.flatten(games.map(game => game.supplyPiles)));
     const allWinners = _.uniq(_.flatten(games.map(game => game.winners)));
 
+    const buildFilter = (placeholder, filterKey, list, options) => {
+      return (
+        <Select
+          placeholder={placeholder}
+          value={filters[filterKey]}
+          options={list.map(item => ({label: item.toString(), value: item}) )}
+          onChange={(list) => this.handleFilterChange(list, filterKey)}
+          {...options}
+        />
+      );
+    };
+
     return (
       <div className="gameExplorer">
         <div className="gameExplorerHeader">
           <h1>Game Explorer</h1>
           <div className="gameExplorer-filters">
-            <Select placeholder="Players" value={filters.playerList} options={this.convertListToSelectOptions(allPlayers)} onChange={(list) => this.handleFilterChange(list, 'playerList')} multi />
-            <Select placeholder="Num Players" value={filters.numPlayers} options={this.convertListToSelectOptions(allNumPlayers)} onChange={(list) => this.handleFilterChange(list, 'numPlayers')} />
-            <Select placeholder="Winners" value={filters.winners} options={this.convertListToSelectOptions(allWinners)} onChange={(list) => this.handleFilterChange(list, 'winners')} multi />
-            <Select placeholder="Supply Piles" values={filters.supplyPiles} options={this.convertListToSelectOptions(allSupplyPiles)} onChange={(list) => this.handleFilterChange(list, 'supplyPiles')} multi />
+            {buildFilter('Players', 'playerList', allPlayers, {multi: true, autoBlur: true} )}
+            {buildFilter('Num Players', 'numPlayers', allNumPlayers)}
+            {buildFilter('Winners', 'winners', allWinners, {multi: true, autoBlur: true} )}
+            {buildFilter('Supply Piles', 'supplyPiles', allSupplyPiles, {multi: true, autoBlur: true} )}
+            <br/>
+            Matched {filteredGames.length} games! Select one:
           </div>
           <select
             onChange={e => this.handleSelectGame(e.target.value)}
