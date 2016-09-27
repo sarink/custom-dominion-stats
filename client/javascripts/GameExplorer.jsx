@@ -304,10 +304,10 @@ export default class GameExplorer extends Component {
 
     const filteredGames = games.filter((game) => {
       return (
-        (filters.playerList ? _.intersection(game.playerList, filters.playerList).length === 0 : true) &&
+        (filters.playerList ? _.intersection(game.playerList, filters.playerList).length === filters.playerList.length : true) &&
         (filters.numPlayers ? game.playerList.length === filters.numPlayers : true) &&
-        (filters.winners ? _.intersection(game.winners, filters.winners).length === 0 : true) &&
-        (filters.supplyPiles ? _.intersection(game.supplyPiles, filters.supplyPiles).length === 0 : true)
+        (filters.winners ? _.intersection(game.winners, filters.winners).length === filters.winners.length : true) &&
+        (filters.supplyPiles ? _.intersection(game.supplyPiles, filters.supplyPiles).length === filters.supplyPiles.length : true)
       );
     });
 
