@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import Chart from 'chart.js';
 import _ from 'lodash';
+import Select from 'react-select';
 
 class ActionGraph extends Component {
   constructor() {
@@ -263,6 +264,13 @@ export default class GameExplorer extends Component {
     super();
     this.state = {
       selectedGameId: null,
+      filters: {
+        playerList: null,
+        numPlayers: null,
+        minTurnCount: 4,
+        winners: null,
+        supplyPiles: null,
+      },
     };
   }
 
@@ -270,21 +278,82 @@ export default class GameExplorer extends Component {
     this.setState({ selectedGameId: value ? parseInt(value, 10) : null });
   }
 
-  render() {
-    const games = this.props.games;
+  handleFilterChange = (list, filterKey) => {
+    let filterValue = null;
 
-    const selectedGame = this.state.selectedGameId ? _.find(this.props.games, { id: this.state.selectedGameId }) : null;
+    // Multi-select filters come as an array of {label, value} objects
+    if (_.isArray(list)) {
+      filterValue = list.map(item => item.value);
+      if (_.isEmpty(filterValue)) filterValue = null;
+    }
+    // Single-select filters will be just one {label, value} object
+    else {
+      filterValue = list && list.value ? list.value : null;
+    }
+
+    const filters = {
+      ...this.state.filters,
+      [filterKey]: filterValue,
+    };
+
+    this.setState({ filters });
+  }
+
+  render() {
+    const { games } = this.props;
+    const { selectedGameId, filters } = this.state;
+
+    const filteredGames = games.filter((game) => {
+      return (
+        (filters.minTurnCount ? game.turnCount > filters.minTurnCount : true) &&
+        (filters.playerList ? _.intersection(game.playerList, filters.playerList).length === filters.playerList.length : true) &&
+        (filters.numPlayers ? game.playerList.length === filters.numPlayers : true) &&
+        (filters.winners ? _.intersection(game.winners, filters.winners).length === filters.winners.length : true) &&
+        (filters.supplyPiles ? _.intersection(game.supplyPiles, filters.supplyPiles).length === filters.supplyPiles.length : true)
+      );
+    });
+
+    const selectedGame = selectedGameId ? _.find(filteredGames, { id: selectedGameId }) : null;
+
+    const computeFilterList = (gameKey) => _.uniq(_.flatten(filteredGames.map(game => game[gameKey]) )).sort();
+    const allPlayers = computeFilterList('playerList');
+    const allWinners = computeFilterList('winners');
+    const allSupplyPiles = computeFilterList('interestingSupplyPiles');
+    const allNumPlayers = _.range(1, _.max(_.flatten(filteredGames.map(game => game.playerList.length) )) + 1);
+    // const allTurnCounts = _.range(1, _.max(_.flatten(filteredGames.map(game => game.turnCount) )));
+
+    const buildFilterElement = (placeholder, filterKey, list, options) => {
+      return (
+        <Select
+          placeholder={placeholder}
+          value={filters[filterKey]}
+          options={list.map(item => ({label: item.toString(), value: item}) )}
+          onChange={(list) => this.handleFilterChange(list, filterKey)}
+          {...options}
+        />
+      );
+    };
 
     return (
       <div className="gameExplorer">
         <div className="gameExplorerHeader">
           <h1>Game Explorer</h1>
+          <div className="gameExplorer-filters">
+            <span>(automatically ignoring games with less than {filters.minTurnCount} turns)</span>
+            {/*buildFilterElement('Min Num Turns', 'minTurnCount', allTurnCounts, {autoBlur: true} )*/}
+            {buildFilterElement('Players', 'playerList', allPlayers, {multi: true, autoBlur: true} )}
+            {buildFilterElement('Num Players', 'numPlayers', allNumPlayers)}
+            {buildFilterElement('Winners', 'winners', allWinners, {multi: true, autoBlur: true} )}
+            {buildFilterElement('Supply Piles', 'supplyPiles', allSupplyPiles, {multi: true, autoBlur: true} )}
+            <br/>
+            Matched {filteredGames.length} game(s)! Select one:
+          </div>
           <select
             onChange={e => this.handleSelectGame(e.target.value)}
             defaultValue=""
           >
             <option key="default" value="">Select a game</option>
-            { games.map(g => <option key={g.id} value={g.id}>Game {g.id}</option>) }
+            { filteredGames.map(g => <option key={g.id} value={g.id}>Game {g.id}</option>) }
           </select>
         </div>
 
