@@ -267,6 +267,7 @@ export default class GameExplorer extends Component {
       filters: {
         playerList: null,
         numPlayers: null,
+        minTurnCount: 4,
         winners: null,
         supplyPiles: null,
       },
@@ -304,6 +305,7 @@ export default class GameExplorer extends Component {
 
     const filteredGames = games.filter((game) => {
       return (
+        (filters.minTurnCount ? game.turnCount > filters.minTurnCount : true) &&
         (filters.playerList ? _.intersection(game.playerList, filters.playerList).length === filters.playerList.length : true) &&
         (filters.numPlayers ? game.playerList.length === filters.numPlayers : true) &&
         (filters.winners ? _.intersection(game.winners, filters.winners).length === filters.winners.length : true) &&
@@ -313,12 +315,14 @@ export default class GameExplorer extends Component {
 
     const selectedGame = selectedGameId ? _.find(filteredGames, { id: selectedGameId }) : null;
 
-    const allPlayers = _.uniq(_.flatten(games.map(game => game.playerList)));
-    const allNumPlayers = [1, 2, 3, 4];
-    const allSupplyPiles = _.uniq(_.flatten(games.map(game => game.supplyPiles)));
-    const allWinners = _.uniq(_.flatten(games.map(game => game.winners)));
+    const computeFilterList = (gameKey) => _.uniq(_.flatten(games.map(game => game[gameKey]) )).sort();
+    const allPlayers = computeFilterList('playerList');
+    const allWinners = computeFilterList('winners');
+    const allSupplyPiles = computeFilterList('supplyPiles');
+    const allNumPlayers = _.range(1, _.max(_.flatten(games.map(game => game.playerList.length) )) + 1);
+    // const allTurnCounts = _.range(1, _.max(_.flatten(games.map(game => game.turnCount) )));
 
-    const buildFilter = (placeholder, filterKey, list, options) => {
+    const buildFilterElement = (placeholder, filterKey, list, options) => {
       return (
         <Select
           placeholder={placeholder}
@@ -335,10 +339,12 @@ export default class GameExplorer extends Component {
         <div className="gameExplorerHeader">
           <h1>Game Explorer</h1>
           <div className="gameExplorer-filters">
-            {buildFilter('Players', 'playerList', allPlayers, {multi: true, autoBlur: true} )}
-            {buildFilter('Num Players', 'numPlayers', allNumPlayers)}
-            {buildFilter('Winners', 'winners', allWinners, {multi: true, autoBlur: true} )}
-            {buildFilter('Supply Piles', 'supplyPiles', allSupplyPiles, {multi: true, autoBlur: true} )}
+            <span>(automatically ignoring games with less than {filters.minTurnCount} turns)</span>
+            {/*buildFilterElement('Min Num Turns', 'minTurnCount', allTurnCounts, {autoBlur: true} )*/}
+            {buildFilterElement('Players', 'playerList', allPlayers, {multi: true, autoBlur: true} )}
+            {buildFilterElement('Num Players', 'numPlayers', allNumPlayers)}
+            {buildFilterElement('Winners', 'winners', allWinners, {multi: true, autoBlur: true} )}
+            {buildFilterElement('Supply Piles', 'supplyPiles', allSupplyPiles, {multi: true, autoBlur: true} )}
             <br/>
             Matched {filteredGames.length} games! Select one:
           </div>
