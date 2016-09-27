@@ -300,7 +300,7 @@ export default class GameExplorer extends Component {
 
   render() {
     const { games } = this.props;
-    const { filters } = this.state;
+    const { selectedGameId, filters } = this.state;
 
     const filteredGames = games.filter((game) => {
       return (
@@ -311,7 +311,7 @@ export default class GameExplorer extends Component {
       );
     });
 
-    const selectedGame = this.state.selectedGameId ? _.find(filteredGames, { id: this.state.selectedGameId }) : null;
+    const selectedGame = selectedGameId ? _.find(filteredGames, { id: selectedGameId }) : null;
 
     const allPlayers = _.uniq(_.flatten(games.map(game => game.playerList)));
     const allNumPlayers = [1, 2, 3, 4];
