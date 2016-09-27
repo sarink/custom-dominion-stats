@@ -346,7 +346,7 @@ export default class GameExplorer extends Component {
             {buildFilterElement('Winners', 'winners', allWinners, {multi: true, autoBlur: true} )}
             {buildFilterElement('Supply Piles', 'supplyPiles', allSupplyPiles, {multi: true, autoBlur: true} )}
             <br/>
-            Matched {filteredGames.length} games! Select one:
+            Matched {filteredGames.length} game(s)! Select one:
           </div>
           <select
             onChange={e => this.handleSelectGame(e.target.value)}
