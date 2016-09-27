@@ -112,6 +112,7 @@ export default class Leaderboard extends Component {
       <div className="leaderboard">
         <h1 className="leaderboard-title">Leaderboard</h1>
         <div className="leaderboard-filters">
+          <span>(automatically ignoring games with less than {MIN_NUM_TURNS_THRESHOLD} turns)</span>
           <Select
             value={playerList}
             resetValue={this.convertPlayerListToSelectOptions(initialPlayerList)}
