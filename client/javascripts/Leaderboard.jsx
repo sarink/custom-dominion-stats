@@ -54,12 +54,16 @@ export default class Leaderboard extends Component {
     })).isRequired,
   }
 
-  handlePlayerListFilterChange = (playerList) => {
-    this.setState({ playerList: playerList.map(player => player.value) });
+  handlePlayerListFilterChange = (selectedPlayerList) => {
+    this.setState({ playerList: selectedPlayerList.map(player => player.value) });
+  }
+
+  convertPlayerListToSelectOptions = (playerList) => {
+    return playerList.map(player => ({label: player, value: player}) );
   }
 
   render() {
-    const { games } = this.props;
+    const { games, initialPlayerList } = this.props;
     const { playerList } = this.state;
 
     const placeIndexToPlaceName = {
@@ -100,13 +104,20 @@ export default class Leaderboard extends Component {
 
     // Get a list of all players from our games, then build options for reaect-select like: [{label: 'player', value: 'player'}]
     const allPlayers = _.uniq(_.flatten(games.map(game => game.playerList)));
-    const playerListOptions = allPlayers.map(player => ({label: player, value: player}) );
+    const playerListOptions = this.convertPlayerListToSelectOptions(allPlayers);
 
     return (
       <div className="leaderboard">
         <h1 className="leaderboard-title">Leaderboard</h1>
         <div className="leaderboard-filters">
-          <Select value={playerList} options={playerListOptions} onChange={this.handlePlayerListFilterChange} multi autoBlur />
+          <Select
+            value={playerList}
+            resetValue={this.convertPlayerListToSelectOptions(initialPlayerList)}
+            options={playerListOptions}
+            onChange={this.handlePlayerListFilterChange}
+            multi
+            autoBlur
+          />
           <br/>
         </div>
         {!_.isEmpty(filteredGames)
