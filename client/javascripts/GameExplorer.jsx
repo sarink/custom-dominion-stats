@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import Chart from 'chart.js';
 import _ from 'lodash';
+import Select from 'react-select';
 
 class ActionGraph extends Component {
   constructor() {
@@ -263,6 +264,12 @@ export default class GameExplorer extends Component {
     super();
     this.state = {
       selectedGameId: null,
+      filters: {
+        playerList: null,
+        numPlayers: null,
+        winners: null,
+        supplyPiles: null,
+      },
     };
   }
 
@@ -270,21 +277,56 @@ export default class GameExplorer extends Component {
     this.setState({ selectedGameId: value ? parseInt(value, 10) : null });
   }
 
-  render() {
-    const games = this.props.games;
+  convertListToSelectOptions = (list) => {
+    return list.map(item => ({label: item, value: item}) );
+  }
 
-    const selectedGame = this.state.selectedGameId ? _.find(this.props.games, { id: this.state.selectedGameId }) : null;
+  handleFilterChange = (list, filterKey) => {
+    const filters = {
+      ...this.state.filters,
+      [filterKey]: list.map(item => item.value),
+    };
+    this.setState({ filters });
+  }
+
+  render() {
+    const { games } = this.props;
+    const { filters } = this.state;
+
+    const filteredGames = games.filter((game) => {
+      return (
+        (filters.playerList ? _.intersection(game.playerList, filters.playerList).length === 0 : true) &&
+        (filters.numPlayers ? game.playerList.length === filters.numPlayers : true) &&
+        (filters.winners ? _.intersection(game.winners, filters.winners).length === 0 : true) &&
+        (filters.supplyPiles ? _.intersection(game.supplyPiles, filters.supplyPiles).length === 0 : true)
+      );
+    });
+    console.debug('filteredGames', filteredGames);
+    console.debug('filters', filters);
+
+    const selectedGame = this.state.selectedGameId ? _.find(filteredGames, { id: this.state.selectedGameId }) : null;
+
+    const allPlayers = _.uniq(_.flatten(games.map(game => game.playerList)));
+    const allNumPlayers = [1, 2, 3, 4];
+    const allSupplyPiles = _.uniq(_.flatten(games.map(game => game.supplyPiles)));
+    const allWinners = _.uniq(_.flatten(games.map(game => game.winners)));
 
     return (
       <div className="gameExplorer">
         <div className="gameExplorerHeader">
           <h1>Game Explorer</h1>
+          <div className="gameExplorer-filters">
+            <Select placeholder="Players" value={filters.playerList} options={this.convertListToSelectOptions(allPlayers)} onChange={(list) => this.handleFilterChange(list, 'playerList')} multi />
+            <Select placeholder="Num Players" value={filters.numPlayers} options={this.convertListToSelectOptions(allNumPlayers)} onChange={(list) => this.handleFilterChange(list, 'numPlayers')} />
+            <Select placeholder="Winners" value={filters.winners} options={this.convertListToSelectOptions(allWinners)} onChange={(list) => this.handleFilterChange(list, 'winners')} multi />
+            <Select placeholder="Supply Piles" values={filters.supplyPiles} options={this.convertListToSelectOptions(allSupplyPiles)} onChange={(list) => this.handleFilterChange(list, 'supplyPiles')} multi />
+          </div>
           <select
             onChange={e => this.handleSelectGame(e.target.value)}
             defaultValue=""
           >
             <option key="default" value="">Select a game</option>
-            { games.map(g => <option key={g.id} value={g.id}>Game {g.id}</option>) }
+            { filteredGames.map(g => <option key={g.id} value={g.id}>Game {g.id}</option>) }
           </select>
         </div>
 
