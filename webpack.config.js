@@ -23,6 +23,14 @@ module.exports = {
           presets: ['es2015', 'stage-0'],
         },
       },
+      {
+        test: /\.css/,
+        exclude: /node_modules/,
+        loaders: [
+          'style?sourceMap',
+          'css?modules',
+        ],
+      },
     ],
   },
 

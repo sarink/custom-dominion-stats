@@ -6,6 +6,8 @@ import Leaderboard from 'javascripts/Leaderboard';
 import GameExplorer from 'javascripts/GameExplorer';
 import LastUpdatedStats from 'javascripts/LastUpdatedStats';
 
+import styles from './Root.css';
+
 export default class Root extends Component {
   static propTypes = {
     allGames: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -31,7 +33,7 @@ export default class Root extends Component {
     }
 
     return (
-      <div className="root">
+      <div className={styles.root}>
         {showLastUpdatedStats ? <LastUpdatedStats key="lastUpdatedStats" lastGitPull={lastGitPull} lastDbUpdate={lastDbUpdate} lastDbLogUrl={lastDbLogUrl}/> : null}
         {content}
       </div>
