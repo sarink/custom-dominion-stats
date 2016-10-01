@@ -1,15 +1,17 @@
 import React, { Component, PropTypes } from 'react';
 
+import styles from './LastUpdatedStats.css';
+
 export default class LastUpdatedStats extends Component {
   render() {
     const { lastGitPull, lastDbUpdate, lastDbLogUrl } = this.props;
     const lastGitPullDate = new Date(lastGitPull);
     const lastDbUpdateDate = new Date(lastDbUpdate);
     return (
-      <div className="lastUpdatedStats">
+      <div className={styles.lastUpdatedStats}>
         <div>Last git pull: {lastGitPullDate.toString()}</div>
         <div>Last db update: {lastDbUpdateDate.toString()}</div>
-        <div className="lastUpdatedStats-lastDbLogUrl">Last db log url: <a target="_blank" href={lastDbLogUrl}>{lastDbLogUrl}</a></div>
+        <div className={styles.lastUpdatedStats-lastDbLogUrl}>Last db log url: <a target="_blank" href={lastDbLogUrl}>{lastDbLogUrl}</a></div>
       </div>
     );
   }

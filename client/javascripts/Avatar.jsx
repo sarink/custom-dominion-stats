@@ -1,6 +1,8 @@
 import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 
+import styles from './Avatar.css';
+
 export default class Avatar extends Component {
   static propTypes = {
     playerName: PropTypes.string.isRequired,
@@ -13,10 +15,10 @@ export default class Avatar extends Component {
     const avatarExists = _.includes(weHaveAvatarsFor, playerName);
     const avatar = (avatarExists)
       ? (
-        <img className="avatar" src={`images/avatars/${playerName}.png`} />
+        <img className={styles.avatar} src={`images/avatars/${playerName}.png`} />
       )
       : (
-        <div className="avatar" style={{backgroundImage: 'url(images/avatars/default.jpg)'}}>
+        <div className={styles.avatar} style={{backgroundImage: 'url(images/avatars/default.jpg)'}}>
           <span>{playerName}</span>
         </div>
       );
