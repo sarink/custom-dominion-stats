@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-import styles from './LastUpdatedStats.css';
+import styles from './LastUpdatedStats.scss';
 
 export default class LastUpdatedStats extends Component {
   render() {

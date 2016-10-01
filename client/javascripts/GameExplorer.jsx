@@ -3,7 +3,7 @@ import Chart from 'chart.js';
 import _ from 'lodash';
 import Select from 'react-select';
 
-import styles from './GameExplorer.css';
+import styles from './GameExplorer.scss';
 
 class ActionGraph extends Component {
   constructor() {

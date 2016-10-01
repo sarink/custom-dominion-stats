@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 
-import styles from './Avatar.css';
+import styles from './Avatar.scss';
 
 export default class Avatar extends Component {
   static propTypes = {

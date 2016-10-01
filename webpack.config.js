@@ -1,6 +1,11 @@
 const webpack = require('webpack');
 const path = require('path');
 
+const dotCssLoaders = [
+  'style?sourceMap',
+  'css?modules',
+];
+
 module.exports = {
   context: path.resolve(__dirname, 'client'),
   entry: 'javascripts/index',
@@ -26,10 +31,12 @@ module.exports = {
       {
         test: /\.css/,
         exclude: /node_modules/,
-        loaders: [
-          'style?sourceMap',
-          'css?modules',
-        ],
+        loaders: dotCssLoaders,
+      },
+      {
+        test: /\.scss/,
+        exclude: /node_modules/,
+        loaders: [].concat(dotCssLoaders).concat(['sass']),
       },
     ],
   },

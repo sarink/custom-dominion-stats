@@ -6,7 +6,7 @@ import Leaderboard from 'javascripts/Leaderboard';
 import GameExplorer from 'javascripts/GameExplorer';
 import LastUpdatedStats from 'javascripts/LastUpdatedStats';
 
-import styles from './Root.css';
+import styles from './Root.scss';
 
 export default class Root extends Component {
   static propTypes = {

@@ -4,7 +4,7 @@ import _ from 'lodash';
 import Select from 'react-select';
 import Avatar from 'javascripts/Avatar';
 
-import styles from './Leaderboard.css';
+import styles from './Leaderboard.scss';
 
 // Any games with less than this number of turns won't be counted when computing the leaderboard
 const MIN_NUM_TURNS_THRESHOLD = 4;

@@ -1,0 +1,49 @@
+.gameExplorer {
+	max-width: 66%;
+	min-width: 400px;
+}
+
+.gameExplorerHeader {
+	h1, select {
+		display:inline-block;
+		margin-right: 0.25in;
+		vertical-align: middle;
+	}
+}
+
+.gameDetails {
+	display: inline-block;
+	min-width: 400px;
+	width: 33%;
+	vertical-align: top;
+
+	section {
+		padding-top: .1in;
+		padding-bottom: .1in;
+		border-bottom: 1px dashed #ddd;
+
+		div {
+			display: inline-block;
+			vertical-align: top;
+		}
+
+		div:first-child {
+			width: 30%;
+			padding-right: 10%;
+		}
+
+		div:last-child  {
+			width: 60%;
+		}
+	}
+
+	section:last-of-type {
+		border-bottom: none;
+	}
+}
+
+.actionGraph {
+	display: inline-block;
+	width: 66%;
+	vertical-align: top;
+}
