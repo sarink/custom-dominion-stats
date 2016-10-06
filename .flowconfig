@@ -1,2 +1,8 @@
 [ignore]
-.*node_modules/
+.*/node_modules/fbjs/**
+
+[include]
+.*/node_modules/
+
+[options]
+module.name_mapper='^javascripts\/\(.*\)$' -> '<PROJECT_ROOT>/client/javascripts/\1'
