@@ -41,6 +41,7 @@
     "babel-preset-stage-0": "^6.5.0",
     "css-loader": "^0.25.0",
     "eslint": "^3.5.0",
+    "flow-bin": "^0.33.0",
     "node-sass": "^3.10.1",
     "react-transform-hmr": "^1.0.4",
     "sass-loader": "^4.0.2",
