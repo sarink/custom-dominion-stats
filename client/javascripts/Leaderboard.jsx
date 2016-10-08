@@ -1,3 +1,5 @@
+/* @flow */
+
 import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 
@@ -12,6 +14,7 @@ const MIN_NUM_TURNS_THRESHOLD = 4;
 
 class PlayerWithPlaces extends Component {
   static propTypes = {
+    index: PropTypes.number.isRequired,
     playerName: PropTypes.string.isRequired,
     firsts: PropTypes.number.isRequired,
     seconds: PropTypes.number.isRequired,
@@ -37,9 +40,24 @@ class PlayerWithPlaces extends Component {
   }
 }
 
+type LeaderboardProps = {
+  initialPlayerList: Array<string>,
+  games: Array<{
+    playerList: Array<string>,
+    scores: {},
+    turnCount: number,
+    places: Array<Array<string>>,
+  }>
+};
 
 export default class Leaderboard extends Component {
-  constructor(props) {
+  props: LeaderboardProps;
+
+  state: {
+    playerList: Array<string>
+  }
+
+  constructor(props: LeaderboardProps) {
     super(props);
     this.state = {
       playerList: props.initialPlayerList,
@@ -58,11 +76,11 @@ export default class Leaderboard extends Component {
     })).isRequired,
   }
 
-  handlePlayerListFilterChange = (selectedPlayerList) => {
+  handlePlayerListFilterChange = (selectedPlayerList: Array<{ value: string }>) => {
     this.setState({ playerList: selectedPlayerList.map(player => player.value) });
   }
 
-  convertPlayerListToSelectOptions = (playerList) => {
+  convertPlayerListToSelectOptions = (playerList: Array<string>) => {
     return playerList.map(player => ({label: player, value: player}) );
   }
 
@@ -71,10 +89,10 @@ export default class Leaderboard extends Component {
     const { playerList } = this.state;
 
     const placeIndexToPlaceName = {
-      0: 'firsts',
-      1: 'seconds',
-      2: 'thirds',
-      3: 'fourths',
+      '0': 'firsts',
+      '1': 'seconds',
+      '2': 'thirds',
+      '3': 'fourths',
     };
 
     // Build an initial `leaderboard` object where the key is the player name and the value is a place count object
