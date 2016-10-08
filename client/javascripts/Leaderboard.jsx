@@ -12,33 +12,32 @@ import styles from './Leaderboard.scss';
 const MIN_NUM_TURNS_THRESHOLD = 4;
 
 
-class PlayerWithPlaces extends Component {
-  static propTypes = {
-    index: PropTypes.number.isRequired,
-    playerName: PropTypes.string.isRequired,
-    firsts: PropTypes.number.isRequired,
-    seconds: PropTypes.number.isRequired,
-    thirds: PropTypes.number,
-    fourths: PropTypes.number,
-  }
+const PlayerWithPlaces = props => {
+  const { index, playerName, firsts, seconds, thirds, fourths } = props;
 
-  render() {
-    const { index, playerName, firsts, seconds, thirds, fourths }  = this.props;
-
-    return (
-      <div className={styles.playerWithPlaces}>
-        <span className={styles.playerWithPlacesIndex}>{index}.</span>
-        <Avatar playerName={playerName} />
-        <div className={styles.playerWithPlacesStats}>
-          Firsts: {firsts}<br/>
-          Seconds: {seconds}<br/>
-          {thirds != null ? `Thirds: ${thirds}` : null}
-          {fourths != null ? `Fourths: ${fourths}` : null}
-        </div>
+  return (
+    <div className={styles.playerWithPlaces}>
+      <span className={styles.playerWithPlacesIndex}>{index}.</span>
+      <Avatar playerName={playerName} />
+      <div className={styles.playerWithPlacesStats}>
+        Firsts: {firsts}<br/>
+        Seconds: {seconds}<br/>
+        {thirds != null ? `Thirds: ${thirds}` : null}
+        {fourths != null ? `Fourths: ${fourths}` : null}
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
+PlayerWithPlaces.propTypes = {
+  index: PropTypes.number.isRequired,
+  playerName: PropTypes.string.isRequired,
+  firsts: PropTypes.number.isRequired,
+  seconds: PropTypes.number.isRequired,
+  thirds: PropTypes.number,
+  fourths: PropTypes.number,
+};
+
 
 import type { AnalyzedGame } from 'javascripts/GameAnalysis';
 type LeaderboardProps = {
