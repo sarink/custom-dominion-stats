@@ -40,14 +40,10 @@ class PlayerWithPlaces extends Component {
   }
 }
 
+import type { AnalyzedGame } from 'javascripts/GameAnalysis';
 type LeaderboardProps = {
   initialPlayerList: Array<string>,
-  games: Array<{
-    playerList: Array<string>,
-    scores: {},
-    turnCount: number,
-    places: Array<Array<string>>,
-  }>
+  games: Array<AnalyzedGame>
 };
 
 export default class Leaderboard extends Component {

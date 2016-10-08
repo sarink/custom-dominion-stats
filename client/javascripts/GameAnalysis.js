@@ -1,4 +1,30 @@
+/* @flow */
+
 import _ from 'lodash';
+
+// These types are still less than complete - for example the 'any' type of playByPLay and rawData in AnalyzedGame
+// We're also missing some fields, aren't we?
+export type RawGame = {
+  raw_log: string,
+  players: string,
+  id: string,
+};
+
+export type AnalyzedGame = {
+  analyzed: bool,
+  id: string,
+  playerList: Array<string>,
+  winners: Array<string>,
+  places: Array<Array<string>>,
+  scores: { [key: string]: number }, 
+  supplyPiles: Array<string>,
+  interestingSupplyPiles: Array<string>,
+  events: Array<string>,
+  turnCount: number,
+  playByPlay: any,
+  rawData: any,
+};
+
 
 // The Javascript API sucks really badly.
 // Call exec on the given regex, supplying the targetString, until no more matches are found.
@@ -116,7 +142,7 @@ const getPlayByPlay = game => {
   return rawTurns.map(parseTurn);
 };
 
-export const analyzeGame = game => {
+export const analyzeGame = (game: RawGame) => {
   if (game.analyzed) return game;
   return {
     analyzed: true,

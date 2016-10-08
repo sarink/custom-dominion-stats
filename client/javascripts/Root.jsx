@@ -10,10 +10,16 @@ import LastUpdatedStats from 'javascripts/LastUpdatedStats';
 
 import styles from './Root.scss';
 
+import type { AnalyzedGame } from 'javascripts/GameAnalysis';
+type RootPropTypes = {
+  allGames: Array<AnalyzedGame>,
+  lastGitPull: ?string,
+  lastDbUpdate: ?string,
+  lastDbLogUrl: ?string
+};
+
 export default class Root extends Component {
-  static propTypes = {
-    allGames: PropTypes.arrayOf(PropTypes.object).isRequired,
-  }
+  props: RootPropTypes;
 
   render() {
     const { allGames, lastGitPull, lastDbUpdate, lastDbLogUrl } = this.props;
