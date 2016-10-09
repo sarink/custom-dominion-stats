@@ -1,6 +1,8 @@
 const webpack = require('webpack');
 const path = require('path');
 
+const FlowStatusWebpackPlugin = require('flow-status-webpack-plugin');
+
 const dotCssLoaders = [
   'style?sourceMap',
   'css?modules',
@@ -43,4 +45,8 @@ module.exports = {
     root: path.resolve(__dirname, 'client/'),
     extensions: ['', '.js', '.jsx'],
   },
+
+  plugins: [
+    new FlowStatusWebpackPlugin(),
+  ],
 };
