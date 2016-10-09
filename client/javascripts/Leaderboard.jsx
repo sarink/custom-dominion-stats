@@ -11,8 +11,16 @@ import styles from './Leaderboard.scss';
 // Any games with less than this number of turns won't be counted when computing the leaderboard
 const MIN_NUM_TURNS_THRESHOLD = 4;
 
+type PlayerWithPlacesProps = {
+  index: number,
+  playerName: string,
+  firsts: number,
+  seconds: number,
+  thirds: ?number,
+  fourths: ?number,
+};
 
-const PlayerWithPlaces = props => {
+const PlayerWithPlaces = (props: PlayerWithPlacesProps) => {
   const { index, playerName, firsts, seconds, thirds, fourths } = props;
 
   return (
