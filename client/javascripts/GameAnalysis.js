@@ -7,12 +7,12 @@ import _ from 'lodash';
 export type RawGame = {
   raw_log: string,
   players: string,
-  id: string,
+  id: number,
 };
 
 export type AnalyzedGame = {
   analyzed: bool,
-  id: string,
+  id: number,
   playerList: Array<string>,
   winners: Array<string>,
   places: Array<Array<string>>,
