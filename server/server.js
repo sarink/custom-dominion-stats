@@ -5,17 +5,20 @@
   var exec = require('child_process').exec;
   var crypto = require('crypto');
   var bodyParser = require('body-parser');
+  var path = require('path');
 
   var db = require('./db');
 
-  var REPO_ROOT = '/var/www/custom-dominion-stats';
+  var REPO_ROOT = __dirname;
   var PORT = 4000;
 
   var app = express();
   app.listen(PORT);
   console.log('server.js running on port', PORT);
 
-  app.use(express.static(REPO_ROOT + '/client'));
+  const clientPath = path.resolve(__dirname, '../client');
+  console.log(`server.js serving client files from ${clientPath}`);
+  app.use(express.static(clientPath));
 
   // Enable CORS, once the /logs endpoint got too big crossorigin.me began truncating the response :(
   app.use(function(req, res, next) {
