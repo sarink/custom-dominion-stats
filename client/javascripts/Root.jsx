@@ -45,4 +45,8 @@ const Root = (props: RootPropTypes) => {
   );
 };
 
+Root.propTypes = {
+  allGames: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
+
 export default Root;
