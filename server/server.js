@@ -45,7 +45,7 @@
     if (githubEvent === 'push') {
       res.sendStatus(200);
       console.log('signature matched for push event!');
-      var cmd = 'cd ' + REPO_ROOT + ' && sudo git remote update && sudo git reset --hard origin/master && sudo git pull && npm install && node_modules/webpack/bin/webpack.js -p';
+      var cmd = 'cd ' + REPO_ROOT + ' && sudo git remote update && sudo git reset --hard origin/master && sudo git pull && npm run build-prod-client';
       exec(cmd);
     } else {
       console.log('signature did not match');

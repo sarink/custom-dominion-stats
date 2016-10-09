@@ -6,7 +6,8 @@
   "scripts": {
     "nvm-use": ". $HOME/.nvm/nvm.sh && nvm use",
     "start-dev": "webpack-dev-server --inline --hot --host 0.0.0.0 --port 4000 --content-base client/",
-    "start-prod": "npm run nvm-use && mkdirp server/logs && mkdirp server/db && npm run forever-stopall && npm install && NODE_ENV=production webpack -p && forever start -o server/logs/forever-`date '+%Y%m%d%H%M%S'`.log server/server.js ",
+    "start-prod": "npm run nvm-use && mkdirp server/logs && mkdirp server/db && npm run forever-stopall && npm run build-prod-client && forever start -o server/logs/forever-`date '+%Y%m%d%H%M%S'`.log server/server.js ",
+    "build-prod-client": "npm run nvm-use && npm install && NODE_ENV=production webpack -p",
     "forever-stopall": "npm run nvm-use && forever stopall",
     "forever-list": "npm run nvm-use && forever list"
   },
