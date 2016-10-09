@@ -10,7 +10,7 @@ type LastUpdatedStatsProps = {
   lastDbLogUrl: ?string,
 };
 
-export default (props: LastUpdatedStatsProps) => {
+const LastUpdatedStats = (props: LastUpdatedStatsProps) => {
   const { lastGitPull, lastDbUpdate, lastDbLogUrl } = props;
   const lastGitPullDate = new Date(lastGitPull || 0);
   const lastDbUpdateDate = new Date(lastDbUpdate || 0);
@@ -22,3 +22,11 @@ export default (props: LastUpdatedStatsProps) => {
     </div>
   );
 };
+
+LastUpdatedStats.propTypes = {
+  lastGitPull: PropTypes.string,
+  lastDbUpdate: PropTypes.string,
+  lastDbLogUrl: PropTypes.string,
+};
+
+export default LastUpdatedStats;
