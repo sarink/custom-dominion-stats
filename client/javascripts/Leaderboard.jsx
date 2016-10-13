@@ -1,3 +1,5 @@
+/* @flow */
+
 import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 
@@ -9,37 +11,56 @@ import styles from './Leaderboard.scss';
 // Any games with less than this number of turns won't be counted when computing the leaderboard
 const MIN_NUM_TURNS_THRESHOLD = 4;
 
+type PlayerWithPlacesProps = {
+  index: number,
+  playerName: string,
+  firsts: number,
+  seconds: number,
+  thirds: ?number,
+  fourths: ?number,
+};
 
-class PlayerWithPlaces extends Component {
-  static propTypes = {
-    playerName: PropTypes.string.isRequired,
-    firsts: PropTypes.number.isRequired,
-    seconds: PropTypes.number.isRequired,
-    thirds: PropTypes.number,
-    fourths: PropTypes.number,
-  }
+const PlayerWithPlaces = (props: PlayerWithPlacesProps) => {
+  const { index, playerName, firsts, seconds, thirds, fourths } = props;
 
-  render() {
-    const { index, playerName, firsts, seconds, thirds, fourths }  = this.props;
-
-    return (
-      <div className={styles.playerWithPlaces}>
-        <span className={styles.playerWithPlacesIndex}>{index}.</span>
-        <Avatar playerName={playerName} />
-        <div className={styles.playerWithPlacesStats}>
-          Firsts: {firsts}<br/>
-          Seconds: {seconds}<br/>
-          {thirds != null ? `Thirds: ${thirds}` : null}
-          {fourths != null ? `Fourths: ${fourths}` : null}
-        </div>
+  return (
+    <div className={styles.playerWithPlaces}>
+      <span className={styles.playerWithPlacesIndex}>{index}.</span>
+      <Avatar playerName={playerName} />
+      <div className={styles.playerWithPlacesStats}>
+        Firsts: {firsts}<br/>
+        Seconds: {seconds}<br/>
+        {thirds != null ? `Thirds: ${thirds}` : null}
+        {fourths != null ? `Fourths: ${fourths}` : null}
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
+PlayerWithPlaces.propTypes = {
+  index: PropTypes.number.isRequired,
+  playerName: PropTypes.string.isRequired,
+  firsts: PropTypes.number.isRequired,
+  seconds: PropTypes.number.isRequired,
+  thirds: PropTypes.number,
+  fourths: PropTypes.number,
+};
+
+
+import type { AnalyzedGame } from 'javascripts/GameAnalysis';
+type LeaderboardProps = {
+  initialPlayerList: Array<string>,
+  games: Array<AnalyzedGame>
+};
 
 export default class Leaderboard extends Component {
-  constructor(props) {
+  props: LeaderboardProps;
+
+  state: {
+    playerList: Array<string>
+  }
+
+  constructor(props: LeaderboardProps) {
     super(props);
     this.state = {
       playerList: props.initialPlayerList,
@@ -58,11 +79,11 @@ export default class Leaderboard extends Component {
     })).isRequired,
   }
 
-  handlePlayerListFilterChange = (selectedPlayerList) => {
+  handlePlayerListFilterChange = (selectedPlayerList: Array<{ value: string }>) => {
     this.setState({ playerList: selectedPlayerList.map(player => player.value) });
   }
 
-  convertPlayerListToSelectOptions = (playerList) => {
+  convertPlayerListToSelectOptions = (playerList: Array<string>) => {
     return playerList.map(player => ({label: player, value: player}) );
   }
 
@@ -71,10 +92,10 @@ export default class Leaderboard extends Component {
     const { playerList } = this.state;
 
     const placeIndexToPlaceName = {
-      0: 'firsts',
-      1: 'seconds',
-      2: 'thirds',
-      3: 'fourths',
+      '0': 'firsts',
+      '1': 'seconds',
+      '2': 'thirds',
+      '3': 'fourths',
     };
 
     // Build an initial `leaderboard` object where the key is the player name and the value is a place count object

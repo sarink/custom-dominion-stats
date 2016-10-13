@@ -1,0 +1,9 @@
+[ignore]
+.*/node_modules/fbjs/**
+
+[include]
+.*/node_modules/
+
+[options]
+module.name_mapper='^javascripts\/\(.*\)$' -> '<PROJECT_ROOT>/client/javascripts/\1'
+module.name_mapper='^.*.scss$' -> '<PROJECT_ROOT>/client/CSSModule.js.flow'

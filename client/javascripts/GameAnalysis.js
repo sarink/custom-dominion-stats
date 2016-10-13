@@ -1,4 +1,30 @@
+/* @flow */
+
 import _ from 'lodash';
+
+// These types are still less than complete - for example the 'any' type of playByPLay and rawData in AnalyzedGame
+// We're also missing some fields, aren't we?
+export type RawGame = {
+  raw_log: string,
+  players: string,
+  id: number,
+};
+
+export type AnalyzedGame = {
+  analyzed: bool,
+  id: number,
+  playerList: Array<string>,
+  winners: Array<string>,
+  places: Array<Array<string>>,
+  scores: { [key: string]: number }, 
+  supplyPiles: Array<string>,
+  interestingSupplyPiles: Array<string>,
+  events: Array<string>,
+  turnCount: number,
+  playByPlay: any,
+  rawData: any,
+};
+
 
 // The Javascript API sucks really badly.
 // Call exec on the given regex, supplying the targetString, until no more matches are found.
@@ -45,7 +71,11 @@ const getEvents = game => {
 };
 
 // Returns an array of the names of the supply piles in the game - includes coppers, estates, etc
-const getSupplyPiles = game => game.raw_log.match(/Supply cards: (.*?)\n/)[1].split(', ');
+const getSupplyPiles = game => {
+  const supplyPilesMatches = game.raw_log.match(/Supply cards: (.*?)\n/);
+  if (!supplyPilesMatches) throw new Error(`Couldn't parse supply cards for game #${game.id}`);
+  return supplyPilesMatches[1].split(', ');
+};
 
 const excludeBoringPiles = piles => _.difference(piles, ['Copper', 'Silver', 'Gold', 'Estate', 'Duchy', 'Province', 'Curse']);
 
@@ -60,7 +90,9 @@ const getScores = game => {
   const players = getPlayers(game);
   return _.fromPairs(players.map(player => {
     const scoreFinder = new RegExp(`${player} - total victory points: (.*?)\n`);
-    const score = parseInt(log.match(scoreFinder)[1], 10);
+    const scoreMatch = log.match(scoreFinder);
+    if (!scoreMatch) throw new Error(`Couldn't parse score for player "${player}" in game #${game.id}`);
+    const score = parseInt(scoreMatch[1], 10);
     return [player, score];
   }));
 };
@@ -97,7 +129,10 @@ const getPlayByPlay = game => {
   const parseTurn = turnLog => {
     const lines = turnLog.split('\n');
     const turnHeader = lines[0];
-    const [playerName, turnName] = turnHeader.match(/---------- (.*?): turn (.*?) ----------/).slice(1);
+
+    const turnHeaderMatch = turnHeader.match(/---------- (.*?): turn (.*?) ----------/);
+    if (!turnHeaderMatch) throw new Error('Error parsing turn');
+    const [playerName, turnName] = turnHeaderMatch.slice(1);
 
     // For now, let's only track one kind of "happening": a player *plays* a card that's in the
     // list of interesting supply piles. Coincidentally, this should mostly exclude treasures,
@@ -116,7 +151,7 @@ const getPlayByPlay = game => {
   return rawTurns.map(parseTurn);
 };
 
-export const analyzeGame = game => {
+export const analyzeGame = (game: RawGame) => {
   if (game.analyzed) return game;
   return {
     analyzed: true,

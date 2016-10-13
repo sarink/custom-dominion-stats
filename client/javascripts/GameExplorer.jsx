@@ -1,3 +1,5 @@
+/* @flow */
+
 import React, { PropTypes, Component } from 'react';
 import Chart from 'chart.js';
 import _ from 'lodash';
@@ -6,6 +8,10 @@ import Select from 'react-select';
 import styles from './GameExplorer.scss';
 
 class ActionGraph extends Component {
+  // We can do better than this
+  chartObject: any;
+  canvasRef: HTMLElement;
+
   constructor() {
     super();
   }
@@ -23,6 +29,7 @@ class ActionGraph extends Component {
       return;
 
     // creates a map from each value in an array to its index
+    // $FlowFixMe - technically _.invert only works on objects, but arrays are kind of like weird objects so this works (even tho it's Evil)
     const invertArray = array => _.mapValues(_.invert(array), strIndex => parseInt(strIndex, 10));
 
     // always map the same action name to the same hue
@@ -261,7 +268,22 @@ GameDetails.propTypes = {
 
 
 
+type ReactSelectPair = { label: string, value: string };
+// Union type. how cool is that?
+type ReactSelectCallbackValue = ReactSelectPair | Array<ReactSelectPair>;
+
 export default class GameExplorer extends Component {
+  state: {
+    selectedGameId: ?number,
+    filters: {
+      playerList: ?Array<string>,
+      numPlayers: ?number,
+      minTurnCount: ?number,
+      winners: ?Array<string>,
+      supplyPiles: ?Array<string>,
+    },
+  };
+
   constructor() {
     super();
     this.state = {
@@ -276,15 +298,15 @@ export default class GameExplorer extends Component {
     };
   }
 
-  handleSelectGame(value) {
+  handleSelectGame(value: ?string) {
     this.setState({ selectedGameId: value ? parseInt(value, 10) : null });
   }
 
-  handleFilterChange = (list, filterKey) => {
+  handleFilterChange = (list: ReactSelectCallbackValue, filterKey: string) => {
     let filterValue = null;
 
     // Multi-select filters come as an array of {label, value} objects
-    if (_.isArray(list)) {
+    if (list instanceof Array) {
       filterValue = list.map(item => item.value);
       if (_.isEmpty(filterValue)) filterValue = null;
     }
@@ -306,12 +328,28 @@ export default class GameExplorer extends Component {
     const { selectedGameId, filters } = this.state;
 
     const filteredGames = games.filter((game) => {
+      // This totally-legitimate code was rewritten to make flux happy.
+      // If you have a nullable value like... playerList is an ?Array<string> and you do 
+      // if (playerList) { console.log(playerList.length) }
+      // flow will be happy, because even though playerList is allowed to be null, you already
+      // checked for null values before you tried to get its ".length".
+      // But if it's inside an object like...
+      // if (filters.playerList) { console.log(filters.playerList.length) }
+      // flow WON'T be happy, because...???
+      const {
+        minTurnCount: minTurnCountFilter,
+        playerList: playerListFilter,
+        numPlayers: numPlayersFilter,
+        winners: winnersFilter,
+        supplyPiles: supplyPilesFilter, 
+      } = filters;
+
       return (
-        (filters.minTurnCount ? game.turnCount > filters.minTurnCount : true) &&
-        (filters.playerList ? _.intersection(game.playerList, filters.playerList).length === filters.playerList.length : true) &&
-        (filters.numPlayers ? game.playerList.length === filters.numPlayers : true) &&
-        (filters.winners ? _.intersection(game.winners, filters.winners).length === filters.winners.length : true) &&
-        (filters.supplyPiles ? _.intersection(game.supplyPiles, filters.supplyPiles).length === filters.supplyPiles.length : true)
+        (minTurnCountFilter ? game.turnCount > minTurnCountFilter : true) &&
+        (playerListFilter ? _.intersection(game.playerList, playerListFilter).length === playerListFilter.length : true) &&
+        (numPlayersFilter ? game.playerList.length === numPlayersFilter : true) &&
+        (winnersFilter ? _.intersection(game.winners, winnersFilter).length === winnersFilter.length : true) &&
+        (supplyPilesFilter ? _.intersection(game.supplyPiles, supplyPilesFilter).length === supplyPilesFilter.length : true)
       );
     });
 

@@ -1,3 +1,5 @@
+/* @flow */
+
 import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 import $ from 'jquery';
@@ -30,13 +32,24 @@ else if (devMode === DEV_MODE_LOCAL) {
 }
 
 export default class RootContainer extends Component {
+  state: {
+    loading: boolean,
+    games: {},
+    playerNames: ?string[],
+    lastGitPull: ?string,
+    lastDbUpdate: ?string,
+    lastDbLogUrl: ?string
+  }
+
   constructor() {
     super();
     this.state = {
       loading: true,
-      games: null,
+      games: {},
       lastGitPull: null,
       lastDbUpdate: null,
+      lastDbLogUrl: null,
+      playerNames: null,
     };
   }
 
