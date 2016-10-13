@@ -3,16 +3,18 @@
   min-width: 200px;
 }
 
-.leaderboard-title {
+.title {
 }
 
-.leaderboard-playerWithPlaces {
+
+
+.playerWithPlaces {
   display: flex;
   flex-direction: row;
   margin-bottom: 30px;
 }
 
-.leaderboard-playerWithPlaces-stats {
+.playerWithPlacesStats {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -21,7 +23,7 @@
   font-size: medium;
 }
 
-.leaderboard-playerWithPlaces-index {
+.playerWithPlacesIndex {
   font-size: x-large;
   margin-right: 5px;
 }

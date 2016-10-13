@@ -3,6 +3,8 @@ import Chart from 'chart.js';
 import _ from 'lodash';
 import Select from 'react-select';
 
+import styles from './GameExplorer.scss';
+
 class ActionGraph extends Component {
   constructor() {
     super();
@@ -172,8 +174,8 @@ class GameDetails extends Component {
     });
 
     return (
-      <div className="gameDetailsContainer">
-        <div className="gameDetails">
+      <div className={styles.gameDetailsContainer}>
+        <div className={styles.gameDetails}>
           <h2>Game {game.id}</h2>
           <section>
             <div>Players</div>
@@ -228,7 +230,7 @@ class GameDetails extends Component {
             ) : null
           }
         </div>
-        <div className="actionGraph">
+        <div className={styles.actionGraph}>
           <h2>ACTION Graphs</h2>
           {
             _.map(game.playerList, player => (
@@ -335,10 +337,10 @@ export default class GameExplorer extends Component {
     };
 
     return (
-      <div className="gameExplorer">
-        <div className="gameExplorerHeader">
+      <div className={styles.gameExplorer}>
+        <div className={styles.gameExplorerHeader}>
           <h1>Game Explorer</h1>
-          <div className="gameExplorer-filters">
+          <div className={styles.gameExplorerFilters}>
             <span>(automatically ignoring games with less than {filters.minTurnCount} turns)</span>
             {/*buildFilterElement('Min Num Turns', 'minTurnCount', allTurnCounts, {autoBlur: true} )*/}
             {buildFilterElement('Players', 'playerList', allPlayers, {multi: true, autoBlur: true} )}

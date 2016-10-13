@@ -4,6 +4,8 @@ import _ from 'lodash';
 import Select from 'react-select';
 import Avatar from 'javascripts/Avatar';
 
+import styles from './Leaderboard.scss';
+
 // Any games with less than this number of turns won't be counted when computing the leaderboard
 const MIN_NUM_TURNS_THRESHOLD = 4;
 
@@ -21,10 +23,10 @@ class PlayerWithPlaces extends Component {
     const { index, playerName, firsts, seconds, thirds, fourths }  = this.props;
 
     return (
-      <div className="leaderboard-playerWithPlaces">
-        <span className="leaderboard-playerWithPlaces-index">{index}.</span>
+      <div className={styles.playerWithPlaces}>
+        <span className={styles.playerWithPlacesIndex}>{index}.</span>
         <Avatar playerName={playerName} />
-        <div className="leaderboard-playerWithPlaces-stats">
+        <div className={styles.playerWithPlacesStats}>
           Firsts: {firsts}<br/>
           Seconds: {seconds}<br/>
           {thirds != null ? `Thirds: ${thirds}` : null}
@@ -109,9 +111,9 @@ export default class Leaderboard extends Component {
     const playerListOptions = this.convertPlayerListToSelectOptions(allPlayers);
 
     return (
-      <div className="leaderboard">
-        <h1 className="leaderboard-title">Leaderboard</h1>
-        <div className="leaderboard-filters">
+      <div className={styles.leaderboard}>
+        <h1 className={styles.title}>Leaderboard</h1>
+        <div className={styles.filters}>
           <span>(automatically ignoring games with less than {MIN_NUM_TURNS_THRESHOLD} turns)</span>
           <Select
             value={playerList}
