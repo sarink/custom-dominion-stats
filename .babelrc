@@ -1,5 +1,8 @@
 {
-  plugins: ["transform-react-jsx"],
+  plugins: [
+    "transform-react-jsx",
+    "transform-flow-strip-types"
+  ],
   "env": {
     // only enable it when process.env.NODE_ENV is 'development' or undefined
     "development": {
@@ -16,7 +19,6 @@
             // this is just one of them!
           }
         ],
-        "transform-flow-strip-types"
       ]
     }
   }
